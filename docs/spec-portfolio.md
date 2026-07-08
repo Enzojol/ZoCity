@@ -132,3 +132,9 @@ portfolio pour candidater en ESN, pas un site vitrine créatif).
   version simplifiée ?) avant de l'implémenter.
 - Code commenté, structure de fichiers Next.js standard, composants découpés
   proprement (un composant par couche a minima).
+
+---
+
+**Note (2026-07-08)** : sur la branche `feat/immersive-desk-portfolio`, le
+concept City Pop décrit ci-dessus est remplacé par l’expérience « bureau 3D »
+(React + Vite + React Three Fiber). Voir le README à la racine.
