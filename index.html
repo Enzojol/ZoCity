@@ -1,88 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ZoCity — Une ville, une journée, un portfolio</title>
-  <meta name="description" content="Portfolio interactif : faites défiler pour faire passer le temps, du plein jour à la nuit.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body data-state="loading">
-
-  <!-- ==========================================================
-       ÉCRAN DE CHARGEMENT
-       La vidéo est préchargée intégralement (fetch → blob) pour
-       garantir un scrubbing parfaitement fluide, y compris en
-       arrière. Le scroll est verrouillé tant qu'elle n'est pas prête.
-       ========================================================== -->
-  <div class="loader" id="loader" aria-hidden="true">
-    <p class="loader__word">ZoCity</p>
-    <div class="loader__bar"><span class="loader__fill" id="loader-fill"></span></div>
-  </div>
-
-  <!-- ==========================================================
-       SCÈNE FIXE
-       La vidéo occupe tout l'écran et ne bouge jamais.
-       Elle ne se lit jamais toute seule : seul script.js pilote
-       son currentTime en fonction du scroll.
-       ========================================================== -->
-  <div class="stage">
-    <video
-      id="scene"
-      class="stage__video"
-      preload="auto"
-      muted
-      playsinline
-      disablepictureinpicture
-      tabindex="-1"
-    ></video>
-
-    <!-- Voile de nuit : opacifié par la timeline en fin de parcours
-         (préparé pour la phase 2, piloté par body[data-phase]) -->
-    <div class="stage__nightfall" aria-hidden="true"></div>
-
-    <!-- Calque des boutiques (phase 2) : hotspots positionnés en %
-         par-dessus la vidéo, activés par la timeline. -->
-    <div class="stage__shops" id="shops-layer" aria-hidden="true"></div>
-  </div>
-
-  <!-- ==========================================================
-       INTERFACE MINIMALE
-       En mix-blend-difference pour rester lisible du jour à la nuit.
-       ========================================================== -->
-  <header class="ui ui--top">
-    <p class="ui__wordmark">ZoCity</p>
-    <p class="ui__clock" id="clock" aria-label="Heure de la ville">12:00</p>
-  </header>
-
-  <footer class="ui ui--bottom" id="scroll-hint">
-    <p class="ui__hint">Faites défiler pour faire passer le temps</p>
-    <span class="ui__hint-line" aria-hidden="true"></span>
-  </footer>
-
-  <!-- ==========================================================
-       PISTE DE SCROLL — 500vh
-       Élément invisible qui donne sa hauteur à la page.
-       Le pourcentage de progression dans cette piste = le temps.
-       ========================================================== -->
-  <div class="scroll-track" id="scroll-track" aria-hidden="true"></div>
-
-  <!-- ==========================================================
-       SECTIONS DU PORTFOLIO (phase 2)
-       Chaque section correspond à une boutique de la ville.
-       Cachées pour l'instant : ouvertes via Shops.open(id).
-       ========================================================== -->
-  <main hidden>
-    <section id="section-about"      data-shop="record-store"><h2>À propos</h2></section>
-    <section id="section-projects"   data-shop="shop-2"><h2>Mes projets</h2></section>
-    <section id="section-skills"     data-shop="shop-3"><h2>Mes compétences</h2></section>
-    <section id="section-experience" data-shop="shop-4"><h2>Mon expérience</h2></section>
-    <section id="section-contact"    data-shop="shop-5"><h2>Contact</h2></section>
-  </main>
-
-  <script src="script.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Enzo — portfolio interactif. Entrez dans mon espace de travail." />
+    <title>Enzo — Workspace</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
