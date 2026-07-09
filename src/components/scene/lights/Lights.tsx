@@ -67,8 +67,8 @@ export function Lights() {
         shadow-bias={-0.0004}
       />
 
-      {/* Lampe de bureau */}
-      <pointLight ref={lamp} position={[-1.0, 1.28, -1.72]} color="#ffb066" distance={3.6} decay={2} />
+      {/* Lampe de bureau (position = tête de la lampe articulée) */}
+      <pointLight ref={lamp} position={[-0.95, 1.2, -1.73]} color="#ffb066" distance={3.6} decay={2} />
 
       {/* Halo de l'écran principal */}
       <pointLight ref={screenGlow} position={[-0.15, 1.15, -1.45]} color="#9ecfff" distance={2.4} decay={2} intensity={0} />
