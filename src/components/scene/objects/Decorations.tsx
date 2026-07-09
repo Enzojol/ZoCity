@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { RoundedBox } from '@react-three/drei'
 import { makeGradientTexture } from '@/utils/textures'
 
 /**
@@ -18,50 +19,71 @@ export function Decorations() {
 
   return (
     <group>
-      {/* Cadre photo */}
-      <group position={[0.32, 0.85, -1.9]} rotation={[-0.08, -0.3, 0]}>
-        <mesh castShadow>
-          <boxGeometry args={[0.12, 0.15, 0.012]} />
-          <meshStandardMaterial color="#2c2620" roughness={0.6} />
+      {/* Cadre photo incliné sur son pied */}
+      <group position={[0.32, 0.845, -1.9]} rotation={[-0.14, -0.3, 0]}>
+        <RoundedBox args={[0.115, 0.145, 0.01]} radius={0.004} smoothness={2} castShadow>
+          <meshStandardMaterial color="#2c2620" roughness={0.55} />
+        </RoundedBox>
+        <mesh position={[0, 0, 0.006]}>
+          <planeGeometry args={[0.095, 0.125]} />
+          <meshStandardMaterial map={photo} roughness={0.35} />
         </mesh>
-        <mesh position={[0, 0, 0.007]}>
-          <planeGeometry args={[0.1, 0.13]} />
-          <meshStandardMaterial map={photo} roughness={0.4} />
+        {/* Béquille arrière */}
+        <mesh position={[0, -0.04, -0.03]} rotation={[0.5, 0, 0]}>
+          <boxGeometry args={[0.04, 0.09, 0.004]} />
+          <meshStandardMaterial color="#2c2620" roughness={0.55} />
         </mesh>
       </group>
 
-      {/* Casque audio posé à plat */}
-      <group position={[-0.78, 0.795, -1.32]} rotation={[Math.PI / 2, 0, 0.7]}>
+      {/* Casque audio posé à plat : arceau + coussinets */}
+      <group position={[-0.78, 0.8, -1.32]} rotation={[Math.PI / 2, 0, 0.7]}>
         <mesh>
-          <torusGeometry args={[0.07, 0.011, 10, 24, Math.PI]} />
-          <meshStandardMaterial color="#1d1f26" roughness={0.45} />
+          <torusGeometry args={[0.07, 0.009, 12, 28, Math.PI]} />
+          <meshStandardMaterial color="#1d1f26" roughness={0.4} />
         </mesh>
         {[-0.07, 0.07].map((x) => (
-          <mesh key={x} position={[x, 0, 0]}>
-            <cylinderGeometry args={[0.032, 0.032, 0.03, 16]} />
-            <meshStandardMaterial color="#14161d" roughness={0.4} />
-          </mesh>
+          <group key={x} position={[x, -0.008, 0]}>
+            <mesh>
+              <cylinderGeometry args={[0.03, 0.03, 0.022, 18]} />
+              <meshStandardMaterial color="#14161d" roughness={0.35} />
+            </mesh>
+            <mesh position={[0, -0.012, 0]}>
+              <torusGeometry args={[0.024, 0.006, 8, 18]} />
+              <meshStandardMaterial color="#23262f" roughness={0.6} />
+            </mesh>
+          </group>
         ))}
       </group>
 
-      {/* Tablette graphique */}
-      <mesh position={[-0.38, 0.784, -1.42] } rotation={[0, 0.1, 0]} castShadow>
-        <boxGeometry args={[0.24, 0.008, 0.16]} />
-        <meshStandardMaterial color="#22252e" roughness={0.5} />
-      </mesh>
+      {/* Tablette graphique + stylet dans sa gorge */}
+      <group position={[-0.38, 0.787, -1.42]} rotation={[0, 0.1, 0]}>
+        <RoundedBox args={[0.24, 0.007, 0.16]} radius={0.004} smoothness={2} castShadow>
+          <meshStandardMaterial color="#20232c" roughness={0.45} />
+        </RoundedBox>
+        <mesh position={[0, 0.0037, 0.01]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[0.19, 0.115]} />
+          <meshStandardMaterial color="#262a35" roughness={0.4} />
+        </mesh>
+        <mesh position={[0, 0.006, -0.068]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.0032, 0.0032, 0.1, 10]} />
+          <meshStandardMaterial color="#33384a" roughness={0.35} />
+        </mesh>
+      </group>
 
-      {/* Post-it sur le mur, à droite de l'écran */}
+      {/* Post-it sur le mur, à droite de l'écran (légèrement décollés) */}
       {(
         [
-          [0.42, 1.42, '#f4d35e', 0.12],
-          [0.55, 1.32, '#8ef0c0', -0.08],
-          [0.44, 1.24, '#ff9db8', 0.05],
+          [0.42, 1.42, '#e8c94f', 0.12],
+          [0.55, 1.32, '#7edcb0', -0.08],
+          [0.44, 1.24, '#f291ab', 0.05],
         ] as const
       ).map(([x, y, color, rot], i) => (
-        <mesh key={i} position={[x, y, -2.435]} rotation={[0, 0, rot]}>
-          <planeGeometry args={[0.065, 0.065]} />
-          <meshStandardMaterial color={color} roughness={0.9} />
-        </mesh>
+        <group key={i} position={[x, y, -2.437]} rotation={[0, 0, rot]}>
+          <mesh rotation={[0.08, 0, 0]}>
+            <planeGeometry args={[0.06, 0.06]} />
+            <meshStandardMaterial color={color} roughness={0.9} side={2} />
+          </mesh>
+        </group>
       ))}
     </group>
   )

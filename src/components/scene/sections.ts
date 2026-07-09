@@ -14,45 +14,48 @@ export interface SectionConfig {
  * Scene layout reference (meters, floor at y = 0):
  * desk centered on x=0 against the back wall (z ≈ -1.6, top at y = 0.78),
  * bookshelf on the back wall left, window on the back wall right.
+ *
+ * Les poses sont volontairement en plongée : vus de face, les objets posés
+ * à plat (carnet, téléphone) ne présentaient presque aucune surface cliquable.
  */
 export const SECTIONS: Record<SectionId, SectionConfig> = {
   projects: {
     label: 'Mes projets',
-    camera: { position: [-0.15, 1.18, -0.45], target: [-0.15, 1.14, -1.78] },
+    camera: { position: [-0.15, 1.35, -0.5], target: [-0.15, 1.08, -1.78] },
     anchor: [-0.15, 1.15, -1.78],
   },
   about: {
     label: 'Mon parcours',
-    camera: { position: [0.75, 1.52, -0.55], target: [0.75, 0.8, -1.35] },
+    camera: { position: [0.75, 1.85, -0.62], target: [0.75, 0.79, -1.35] },
     anchor: [0.75, 0.82, -1.35],
   },
   skills: {
     label: 'Compétences',
-    camera: { position: [-1.3, 1.45, -0.55], target: [-1.95, 1.3, -2.35] },
+    camera: { position: [-1.25, 1.62, -0.5], target: [-1.95, 1.25, -2.35] },
     anchor: [-1.95, 1.25, -2.3],
   },
   contact: {
     label: 'Contact',
-    camera: { position: [0.95, 1.28, -0.72], target: [0.95, 0.8, -1.55] },
+    camera: { position: [0.95, 1.8, -0.72], target: [0.95, 0.79, -1.55] },
     anchor: [0.95, 0.82, -1.55],
   },
   socials: {
     label: 'Mes réseaux',
-    camera: { position: [1.5, 1.45, -0.8], target: [2.05, 1.45, -2.55] },
+    camera: { position: [1.45, 1.62, -0.78], target: [2.05, 1.42, -2.55] },
     anchor: [2.05, 1.45, -2.55],
   },
   interests: {
     label: 'Centres d’intérêt',
-    camera: { position: [0.62, 1.2, -0.85], target: [0.62, 0.85, -1.62] },
+    camera: { position: [0.62, 1.72, -0.82], target: [0.62, 0.82, -1.62] },
     anchor: [0.62, 0.88, -1.62],
   },
 }
 
-/** Overview poses (desktop / mobile pulled slightly back). */
+/** Overview poses (desktop / mobile pulled slightly back), en plongée ~25°. */
 export const REST_POSE = {
-  desktop: { position: [0, 1.42, 2.35] as V3, target: [0, 1.05, -1.7] as V3 },
-  mobile: { position: [0, 1.6, 3.7] as V3, target: [0, 1.0, -1.7] as V3 },
+  desktop: { position: [0, 2.3, 2.05] as V3, target: [0, 0.58, -1.85] as V3 },
+  mobile: { position: [0, 2.2, 3.2] as V3, target: [0, 0.75, -1.8] as V3 },
 }
 
 /** Where the camera starts before the dolly-in. */
-export const ENTRY_POSE = { position: [-0.9, 1.72, 5.6] as V3, target: [0, 1.1, -1.7] as V3 }
+export const ENTRY_POSE = { position: [-0.9, 2.1, 5.6] as V3, target: [0, 0.95, -1.7] as V3 }
