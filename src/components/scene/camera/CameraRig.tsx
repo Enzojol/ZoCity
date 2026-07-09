@@ -9,8 +9,8 @@ const INTRO_DURATION = 5
 
 /** Pose tenue pendant le boot du PC : assez près pour lire les messages à l'écran. */
 const GREET_POSE: { position: [number, number, number]; target: [number, number, number] } = {
-  position: [-0.15, 1.2, -0.5],
-  target: [-0.15, 1.12, -1.78],
+  position: [-0.15, 1.3, -0.45],
+  target: [-0.15, 1.1, -1.78],
 }
 
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)

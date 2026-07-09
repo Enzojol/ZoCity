@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 import { Interactive } from '@/components/scene/Interactive'
 
@@ -25,15 +26,19 @@ export function Phone() {
   })
 
   return (
-    <Interactive id="contact" position={[0.95, 0.792, -1.55]} rotation={[0, 0.35, 0]} hoverScale={1.07}>
+    <Interactive id="contact" position={[0.95, 0.794, -1.55]} rotation={[0, 0.35, 0]} hoverScale={1.07}>
       <group ref={body}>
-        <mesh castShadow>
-          <boxGeometry args={[0.078, 0.012, 0.16]} />
-          <meshStandardMaterial color="#14161d" roughness={0.3} metalness={0.4} />
+        <RoundedBox args={[0.076, 0.011, 0.158]} radius={0.005} smoothness={3} castShadow>
+          <meshStandardMaterial color="#14161d" roughness={0.25} metalness={0.5} />
+        </RoundedBox>
+        <mesh ref={screen} position={[0, 0.006, 0]} rotation={[-Math.PI / 2, 0, 0]} userData={{ noHighlight: true }}>
+          <planeGeometry args={[0.064, 0.144]} />
+          <meshStandardMaterial color="#05070c" emissive="#7ea0d8" emissiveIntensity={0.12} roughness={0.15} />
         </mesh>
-        <mesh ref={screen} position={[0, 0.0065, 0]} rotation={[-Math.PI / 2, 0, 0]} userData={{ noHighlight: true }}>
-          <planeGeometry args={[0.068, 0.148]} />
-          <meshStandardMaterial color="#05070c" emissive="#7ea0d8" emissiveIntensity={0.12} roughness={0.2} />
+        {/* Îlot caméra */}
+        <mesh position={[-0.022, 0.0058, -0.06]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.006, 12]} />
+          <meshStandardMaterial color="#0a0c12" roughness={0.3} metalness={0.6} />
         </mesh>
       </group>
     </Interactive>

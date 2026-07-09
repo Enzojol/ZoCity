@@ -47,3 +47,8 @@ export const useExperience = create<ExperienceState>((set) => ({
 export function nextHint(visited: SectionId[]): SectionId | null {
   return GUIDE_ORDER.find((id) => !visited.includes(id)) ?? null
 }
+
+// Accès console en dev : window.__exp.getState()
+if (import.meta.env.DEV) {
+  ;(window as unknown as { __exp?: typeof useExperience }).__exp = useExperience
+}

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Html } from '@react-three/drei'
+import { Html, RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 import { Interactive } from '@/components/scene/Interactive'
 import { useExperience } from '@/stores/useExperience'
@@ -84,23 +84,22 @@ export function Computer() {
 
   return (
     <Interactive id="projects" position={[-0.15, 1.02, -1.78]}>
-      {/* Pied */}
-      <mesh position={[0, -0.225, 0.03]} castShadow>
-        <cylinderGeometry args={[0.11, 0.13, 0.02, 24]} />
-        <meshStandardMaterial color="#2c2f38" roughness={0.5} metalness={0.4} />
+      {/* Pied : socle plat + colonne fine */}
+      <mesh position={[0, -0.232, 0.03]} castShadow>
+        <cylinderGeometry args={[0.1, 0.115, 0.014, 28]} />
+        <meshStandardMaterial color="#2e323c" roughness={0.35} metalness={0.55} />
       </mesh>
-      <mesh position={[0, -0.1, 0.028]} castShadow>
-        <boxGeometry args={[0.05, 0.26, 0.035]} />
-        <meshStandardMaterial color="#2c2f38" roughness={0.5} metalness={0.4} />
+      <mesh position={[0, -0.11, 0.028]} rotation={[0.06, 0, 0]} castShadow>
+        <boxGeometry args={[0.038, 0.25, 0.022]} />
+        <meshStandardMaterial color="#2e323c" roughness={0.35} metalness={0.55} />
       </mesh>
-      {/* Dalle */}
-      <mesh position={[0, 0.1, 0]} castShadow>
-        <boxGeometry args={[0.7, 0.42, 0.032]} />
-        <meshStandardMaterial color="#1b1e26" roughness={0.4} metalness={0.3} />
-      </mesh>
-      {/* Écran */}
-      <mesh ref={screen} position={[0, 0.1, 0.0175]} userData={{ noHighlight: true }}>
-        <planeGeometry args={[0.64, 0.36]} />
+      {/* Dalle fine, bords arrondis */}
+      <RoundedBox args={[0.7, 0.42, 0.022]} radius={0.008} smoothness={3} position={[0, 0.1, 0]} castShadow>
+        <meshStandardMaterial color="#1a1d25" roughness={0.35} metalness={0.4} />
+      </RoundedBox>
+      {/* Écran légèrement en retrait dans la dalle */}
+      <mesh ref={screen} position={[0, 0.1, 0.0125]} userData={{ noHighlight: true }}>
+        <planeGeometry args={[0.655, 0.375]} />
         <meshStandardMaterial
           color="#060a12"
           emissive="#ffffff"
@@ -108,6 +107,11 @@ export function Computer() {
           emissiveIntensity={0}
           roughness={1}
         />
+      </mesh>
+      {/* LED de veille sous la dalle */}
+      <mesh position={[0, -0.115, 0.014]}>
+        <circleGeometry args={[0.0035, 10]} />
+        <meshStandardMaterial color="#0a0c10" emissive="#9ecfff" emissiveIntensity={1.4} toneMapped={false} />
       </mesh>
       <ScreenIntro />
     </Interactive>
@@ -130,28 +134,39 @@ export function Tower() {
 
   return (
     <group position={[1.35, 0, -1.95]}>
-      <mesh position={[0, 0.26, 0]} castShadow>
-        <boxGeometry args={[0.22, 0.5, 0.45]} />
-        <meshStandardMaterial color="#20232c" roughness={0.45} metalness={0.35} />
-      </mesh>
+      <RoundedBox args={[0.22, 0.5, 0.45]} radius={0.012} smoothness={3} position={[0, 0.26, 0]} castShadow>
+        <meshStandardMaterial color="#1e212a" roughness={0.4} metalness={0.4} />
+      </RoundedBox>
+      {/* Fentes d'aération */}
+      {[-0.04, 0, 0.04].map((y) => (
+        <mesh key={y} position={[0.045, 0.15 + y, 0.226]}>
+          <planeGeometry args={[0.07, 0.006]} />
+          <meshStandardMaterial color="#0c0e13" roughness={0.8} />
+        </mesh>
+      ))}
       {/* Bande LED */}
       <mesh ref={led} position={[-0.07, 0.26, 0.226]}>
-        <planeGeometry args={[0.015, 0.36]} />
+        <planeGeometry args={[0.012, 0.36]} />
         <meshStandardMaterial color="#0a0c10" emissive="#7ef0c0" emissiveIntensity={1} toneMapped={false} />
       </mesh>
       {/* Ventilateur derrière une découpe avant */}
       <mesh position={[0.03, 0.38, 0.226]}>
-        <ringGeometry args={[0.045, 0.055, 24]} />
-        <meshStandardMaterial color="#12141a" roughness={0.6} />
+        <ringGeometry args={[0.045, 0.053, 28]} />
+        <meshStandardMaterial color="#10131a" roughness={0.6} />
       </mesh>
       <group ref={fan} position={[0.03, 0.38, 0.224]}>
-        {[0, 1, 2].map((i) => (
-          <mesh key={i} rotation={[0, 0, (i * Math.PI * 2) / 3]}>
-            <boxGeometry args={[0.012, 0.08, 0.004]} />
+        {[0, 1, 2, 3].map((i) => (
+          <mesh key={i} rotation={[0, 0, (i * Math.PI) / 2]}>
+            <boxGeometry args={[0.01, 0.078, 0.003]} />
             <meshStandardMaterial color="#3a4150" roughness={0.5} />
           </mesh>
         ))}
       </group>
+      {/* Bouton power */}
+      <mesh position={[0.08, 0.47, 0.226]}>
+        <circleGeometry args={[0.006, 12]} />
+        <meshStandardMaterial color="#0a0c10" emissive="#7ea0d8" emissiveIntensity={0.8} />
+      </mesh>
     </group>
   )
 }
