@@ -53,6 +53,12 @@ export function Room() {
         <meshStandardMaterial color={WALL} roughness={0.95} />
       </mesh>
 
+      {/* Plinthe le long du mur du fond */}
+      <mesh position={[0, 0.045, -2.435]}>
+        <boxGeometry args={[8, 0.09, 0.02]} />
+        <meshStandardMaterial color="#20242e" roughness={0.7} />
+      </mesh>
+
       {/* Murs latéraux + plafond */}
       <mesh position={[-4, 1.5, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
         <planeGeometry args={[8, 3]} />

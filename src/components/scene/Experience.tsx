@@ -6,7 +6,8 @@ import { Lights } from '@/components/scene/lights/Lights'
 import { CameraRig } from '@/components/scene/camera/CameraRig'
 import { PostFX } from '@/components/scene/effects/PostFX'
 import { Computer, Tower } from '@/components/scene/objects/Computer'
-import { Keyboard, MouseDevice, SecondMonitor } from '@/components/scene/objects/Peripherals'
+import { Keyboard, MouseDevice } from '@/components/scene/objects/Peripherals'
+import { Laptop } from '@/components/scene/objects/Laptop'
 import { CoffeeMug } from '@/components/scene/objects/CoffeeMug'
 import { Notebook } from '@/components/scene/objects/Notebook'
 import { Phone } from '@/components/scene/objects/Phone'
@@ -41,7 +42,7 @@ export function Experience({ isMobile }: { isMobile: boolean }) {
         <Tower />
         <Keyboard />
         <MouseDevice />
-        <SecondMonitor />
+        <Laptop />
         <DeskLamp />
         <Plant />
         <Decorations />
