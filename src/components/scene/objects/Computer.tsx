@@ -84,13 +84,13 @@ export function Computer() {
 
   return (
     <Interactive id="projects" position={[-0.15, 1.02, -1.78]}>
-      {/* Pied : socle plat + colonne fine */}
+      {/* Pied : socle plat + colonne fine fixée au dos de la dalle */}
       <mesh position={[0, -0.232, 0.03]} castShadow>
         <cylinderGeometry args={[0.1, 0.115, 0.014, 28]} />
         <meshStandardMaterial color="#2e323c" roughness={0.35} metalness={0.55} />
       </mesh>
-      <mesh position={[0, -0.11, 0.028]} rotation={[0.06, 0, 0]} castShadow>
-        <boxGeometry args={[0.038, 0.25, 0.022]} />
+      <mesh position={[0, -0.16, -0.008]} castShadow>
+        <boxGeometry args={[0.042, 0.15, 0.024]} />
         <meshStandardMaterial color="#2e323c" roughness={0.35} metalness={0.55} />
       </mesh>
       {/* Dalle fine, bords arrondis */}
