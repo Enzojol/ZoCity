@@ -6,8 +6,8 @@ import { sfx } from '@/utils/audio'
 
 const LINKS = [
   { label: 'Email', value: CONTACT.email, href: `mailto:${CONTACT.email}` },
-  { label: 'GitHub', value: 'github.com/enzojolivet', href: CONTACT.github },
-  { label: 'LinkedIn', value: 'in/enzojolivet', href: CONTACT.linkedin },
+  { label: 'GitHub', value: 'github.com/Enzojol', href: CONTACT.github },
+  { label: 'LinkedIn', value: 'Enzo Jolivet', href: CONTACT.linkedin },
   { label: 'CV', value: 'Télécharger le PDF', href: CONTACT.cv },
 ]
 

@@ -1,5 +1,5 @@
 /**
- * Contenu éditorial du portfolio — à personnaliser librement,
+ * Contenu éditorial du portfolio (source : CV Enzo Jolivet) —
  * rien ici n'impacte la scène 3D.
  */
 
@@ -17,25 +17,18 @@ export const PROJECTS: Project[] = [
   {
     title: 'ZoCity',
     description:
-      'Portfolio immersif : un bureau 3D interactif où chaque objet ouvre une section. React Three Fiber, éclairage narratif et interface Liquid Glass.',
+      'Ce portfolio : un bureau 3D immersif où chaque objet ouvre une section. React Three Fiber, éclairage narratif, interface Liquid Glass. Repo en cours.',
     tech: ['React', 'Three.js', 'R3F', 'TypeScript', 'Zustand'],
-    github: 'https://github.com/enzojolivet',
+    github: 'https://github.com/Enzojol/ZoCity',
     gradient: 'linear-gradient(135deg, #1d2b4f 0%, #6d5ae8 55%, #ff9e6d 100%)',
   },
   {
-    title: 'City Pop Landing',
+    title: 'HiveZo',
     description:
-      'Landing scroll-driven façon Hiroshi Nagai : la caméra plonge à travers les couches d’une illustration au rythme du scroll (GSAP + ScrollTrigger).',
-    tech: ['Next.js', 'GSAP', 'SVG', 'Tailwind'],
-    github: 'https://github.com/enzojolivet',
-    gradient: 'linear-gradient(135deg, #ff9e6d 0%, #e85a8a 50%, #2b2d5e 100%)',
-  },
-  {
-    title: 'Pilotage produit IA',
-    description:
-      'Cadrage et delivery d’un assistant IA interne : backlog, ateliers utilisateurs, mesure d’adoption. Le produit vu côté chef de projet.',
-    tech: ['Product', 'Scrum', 'LLM', 'Analytics'],
-    gradient: 'linear-gradient(135deg, #123c3a 0%, #1f8a70 55%, #bcd7ff 100%)',
+      'Plateforme web personnelle en construction : interface Liquid Glass, fonds shader animés et briques IA issues de mon homelab. Repo en cours.',
+    tech: ['Next.js', 'Tailwind', 'ShaderGradient', 'IA'],
+    github: 'https://github.com/Enzojol/HiveZo',
+    gradient: 'linear-gradient(135deg, #123c3a 0%, #1f8a70 55%, #ffd166 100%)',
   },
 ]
 
@@ -46,11 +39,11 @@ export interface SkillCategory {
 }
 
 export const SKILLS: SkillCategory[] = [
-  { name: 'Frontend', accent: '#7ec3ff', items: ['React', 'TypeScript', 'Next.js', 'Tailwind', 'Framer Motion'] },
-  { name: 'Backend', accent: '#8ef0c0', items: ['Node.js', 'REST', 'SQL', 'Prisma'] },
-  { name: 'DevOps', accent: '#ffb066', items: ['Git', 'CI/CD', 'Vercel', 'Docker'] },
-  { name: '3D', accent: '#c3a6ff', items: ['Three.js', 'React Three Fiber', 'GLTF', 'Shaders (bases)'] },
-  { name: 'UI / UX', accent: '#ff9db8', items: ['Design systems', 'Prototypage', 'Accessibilité', 'Motion design'] },
+  { name: 'Frontend', accent: '#7ec3ff', items: ['React', 'React Native', 'Angular', 'TypeScript', 'HTML/CSS'] },
+  { name: 'Backend', accent: '#8ef0c0', items: ['Python', 'Java (Spring Boot)', 'PHP (Symfony)', 'C / C++'] },
+  { name: 'Data & ML', accent: '#c3a6ff', items: ['TensorFlow', 'SQL', 'MongoDB', 'Grafana', 'CI/CD (GitHub Actions)'] },
+  { name: 'Produit & Outils', accent: '#ffb066', items: ['Jira', 'Linear', 'Notion', 'Adobe XD', 'Git', 'Klaviyo'] },
+  { name: '3D & Créatif', accent: '#ff9db8', items: ['Three.js', 'React Three Fiber', 'GLTF', 'Motion design'] },
 ]
 
 export interface TimelineEntry {
@@ -62,41 +55,51 @@ export interface TimelineEntry {
 
 export const TIMELINE: TimelineEntry[] = [
   {
-    period: '2024 — auj.',
-    title: 'Chef de projet IT / Product Owner IA',
-    place: 'ESN — Paris',
-    detail: 'Cadrage produit, delivery agile et intégration de fonctionnalités IA dans des outils métier.',
+    period: 'Nov. 2023 — Avr. 2026',
+    title: 'Chef de Projet IT',
+    place: 'Lunettes Pour Tous — Paris',
+    detail:
+      'Roadmap de l’app de gestion de stock RFID (React) du cadrage au déploiement en 31 magasins — précision inventaire 98 %. Implémentation ML (Autone) : disponibilité produit de 70 % à 95 %. Scripts Python d’automatisation multi-équipes, support IT (~80 tickets/semaine) et supervision du centre logistique (16 personnes, +25 % de productivité).',
   },
   {
-    period: '2022 — 2024',
-    title: 'Développeur front-end',
-    place: 'Freelance',
-    detail: 'Sites et interfaces sur mesure : React, animations, expériences interactives.',
+    period: 'Jan. 2022 — Août 2022',
+    title: 'Développeur Full-Stack (alternance)',
+    place: 'Orchestra — Paris',
+    detail:
+      'App interne de data-visualisation (React / Angular), optimisation des workflows support via Jira (Java Spring), monitoring bout-en-bout Grafana : indisponibilités réduites de 30 %.',
   },
   {
-    period: '2019 — 2022',
-    title: 'Formation informatique',
-    place: 'Études supérieures',
-    detail: 'Développement web, gestion de projet et bases de la 3D temps réel.',
+    period: 'Juil. 2021 — Déc. 2021',
+    title: 'Développeur Full-Stack (alternance)',
+    place: 'Sikiwis Digitalizr — Paris',
+    detail:
+      'Plateforme ERP (PHP / Symfony / JS) pour les métaux précieux : architecture modulaire, validation automatique des données (saisie manuelle −40 %), modules sur mesure issus des consultations clients.',
+  },
+  {
+    period: '2019 — 2024',
+    title: 'EPITECH Paris',
+    place: 'Formation',
+    detail:
+      'Expert en Management des Systèmes d’Information (Bac+5, 2024) et Responsable de Projet Web & Mobile (Bac+3/4, 2022).',
   },
 ]
 
 export const CONTACT = {
-  email: 'enzojolivet92@gmail.com',
-  github: 'https://github.com/enzojolivet',
+  email: 'enzojol@hotmail.com',
+  github: 'https://github.com/Enzojol',
   linkedin: 'https://www.linkedin.com/in/enzojolivet',
   cv: '/cv-enzo-jolivet.pdf',
 }
 
 export const SOCIALS = [
-  { name: 'GitHub', handle: '@enzojolivet', url: CONTACT.github },
+  { name: 'GitHub', handle: '@Enzojol', url: CONTACT.github },
   { name: 'LinkedIn', handle: 'Enzo Jolivet', url: CONTACT.linkedin },
   { name: 'Email', handle: CONTACT.email, url: `mailto:${CONTACT.email}` },
 ]
 
 export const INTERESTS = [
-  { name: 'Jeux vidéo', detail: 'Firewatch, Journey, Portal — les jeux qui racontent sans expliquer.' },
-  { name: 'Café', detail: 'Toujours une tasse à portée de main. Filtre, de préférence.' },
-  { name: 'Musique', detail: 'City pop, synthwave et bandes originales de jeux.' },
-  { name: '3D & motion', detail: 'Blender le soir, shaders le week-end.' },
+  { name: 'Homelab', detail: 'Serveur perso qui héberge mes projets code & IA — le terrain de jeu du soir.' },
+  { name: 'Musculation', detail: 'Performance physique et régularité : les mêmes principes qu’un bon sprint.' },
+  { name: 'Pêche', detail: 'Patience, observation, itération. Le meilleur anti-écran.' },
+  { name: 'Lecture', detail: 'De la tech au reste — toujours un livre en cours sur la table de nuit.' },
 ]
