@@ -25,19 +25,35 @@ export function CoffeeMug() {
 
   return (
     <Interactive id="interests" position={[0.62, 0.835, -1.62]} hoverScale={1.06}>
+      {/* Corps légèrement évasé */}
       <mesh castShadow>
-        <cylinderGeometry args={[0.045, 0.04, 0.105, 24]} />
-        <meshStandardMaterial color="#c8552e" roughness={0.35} />
+        <cylinderGeometry args={[0.045, 0.038, 0.105, 28]} />
+        <meshStandardMaterial color="#c8552e" roughness={0.32} />
+      </mesh>
+      {/* Lèvre supérieure */}
+      <mesh position={[0, 0.052, 0]}>
+        <torusGeometry args={[0.0435, 0.0028, 10, 28]} />
+        <meshStandardMaterial color="#d96a42" roughness={0.32} />
+      </mesh>
+      {/* Intérieur sombre */}
+      <mesh position={[0, 0.0505, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.036, 0.0425, 28]} />
+        <meshStandardMaterial color="#7e3c22" roughness={0.5} />
       </mesh>
       {/* Anse */}
-      <mesh position={[0.052, 0.005, 0]} rotation={[0, 0, 0]}>
-        <torusGeometry args={[0.026, 0.007, 10, 20]} />
-        <meshStandardMaterial color="#c8552e" roughness={0.35} />
+      <mesh position={[0.054, 0.008, 0]}>
+        <torusGeometry args={[0.024, 0.0062, 12, 24]} />
+        <meshStandardMaterial color="#c8552e" roughness={0.32} />
       </mesh>
       {/* Café */}
-      <mesh position={[0, 0.049, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[0.04, 20]} />
-        <meshStandardMaterial color="#241610" roughness={0.25} />
+      <mesh position={[0, 0.044, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.037, 24]} />
+        <meshStandardMaterial color="#241610" roughness={0.2} />
+      </mesh>
+      {/* Sous-verre en liège */}
+      <mesh position={[0, -0.0545, 0]}>
+        <cylinderGeometry args={[0.056, 0.056, 0.005, 24]} />
+        <meshStandardMaterial color="#a3805a" roughness={0.9} />
       </mesh>
       {/* Vapeur */}
       {WISPS.map((_, i) => (
