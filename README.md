@@ -1,9 +1,13 @@
 # ZoCity — Workspace
 
+**🔴 Démo live : [enzojolivet.com](https://enzojolivet.com)**
+
 Portfolio immersif : on n'arrive pas sur un site, on entre dans un bureau de
 développeur en fin de journée. La caméra traverse la pièce, le PC s'allume
 (`Hello. — Welcome. — Explore my workspace.`), puis chaque objet du bureau
 ouvre une section :
+
+![Le bureau en fin de journée — la lumière guide le regard](docs/screenshots/desk-hero.png)
 
 | Objet           | Section           |
 | --------------- | ----------------- |
@@ -18,6 +22,10 @@ Aucun bouton « cliquez ici » : la lumière guide le regard (l'écran d'abord,
 puis un spot discret qui respire sur le prochain objet non visité), les objets
 vivent (vapeur du café, LED qui respire, plante qui oscille, notification du
 téléphone), et le survol révèle une étiquette élégante.
+
+| Le PC s'allume…                                | …et chaque objet ouvre un panneau                       |
+| ---------------------------------------------- | ------------------------------------------------------- |
+| ![Boot du PC](docs/screenshots/desk-boot.png) | ![Panneau projets](docs/screenshots/desk-projects.png) |
 
 ## Stack
 
