@@ -8,15 +8,22 @@ const WALL_DARK = '#262b37'
  * La pièce : sol, murs (le mur du fond est percé pour la fenêtre),
  * tapis, et le décor extérieur visible à travers la vitre.
  */
+/** LEDs de status sur les silhouettes du dehors — mêmes teintes que les accents de la UI (voir SKILLS). */
+const RACK_LEDS: Array<[number, number, number, string]> = [
+  [1.95, 1.62, -4.08, '#8ef0c0'],
+  [1.95, 1.5, -4.08, '#ffb066'],
+  [2.55, 1.32, -3.78, '#7ec3ff'],
+  [3.2, 1.98, -3.98, '#8ef0c0'],
+]
+
 export function Room() {
   const dusk = useMemo(
     () =>
       makeGradientTexture([
-        [0, '#1b2340'],
-        [0.45, '#4a3a68'],
-        [0.72, '#c45c6e'],
-        [0.92, '#ff9e6d'],
-        [1, '#ffc98f'],
+        [0, '#04050a'],
+        [0.55, '#080b16'],
+        [0.85, '#0d1424'],
+        [1, '#141f36'],
       ]),
     [],
   )
@@ -73,29 +80,36 @@ export function Room() {
         <meshStandardMaterial color="#222631" roughness={1} />
       </mesh>
 
-      {/* Extérieur : ciel du crépuscule + skyline découpée */}
+      {/* Extérieur : nuit calme, silhouettes de toits avec quelques LEDs d'équipement au loin */}
       <mesh position={[2.05, 1.6, -4.6]}>
         <planeGeometry args={[7, 4.6]} />
         <meshBasicMaterial map={dusk} toneMapped={false} />
       </mesh>
-      {/* Soleil bas */}
-      <mesh position={[2.6, 1.35, -4.55]}>
-        <circleGeometry args={[0.28, 32]} />
-        <meshBasicMaterial color="#ffd9a0" toneMapped={false} />
-      </mesh>
-      {/* Silhouettes d'immeubles */}
+      {/* Silhouettes de toits/antennes */}
       {(
         [
-          [1.3, 1.4, -3.9, 0.5],
-          [1.95, 1.9, -4.1, 0.42],
-          [2.55, 1.1, -3.8, 0.6],
-          [3.2, 1.65, -4.0, 0.5],
-          [3.8, 1.25, -3.7, 0.45],
+          [1.3, 1.15, -3.9, 0.5],
+          [1.95, 1.55, -4.1, 0.42],
+          [2.55, 0.85, -3.8, 0.6],
+          [3.2, 1.35, -4.0, 0.5],
+          [3.8, 1.0, -3.7, 0.45],
         ] as const
       ).map(([x, h, z, w], i) => (
         <mesh key={i} position={[x, h / 2 + 0.3, z]}>
           <boxGeometry args={[w, h, 0.3]} />
-          <meshBasicMaterial color="#232035" toneMapped={false} />
+          <meshBasicMaterial color="#0a0c14" toneMapped={false} />
+        </mesh>
+      ))}
+      {/* Antenne fine sur un des toits */}
+      <mesh position={[1.95, 1.98, -4.1]}>
+        <cylinderGeometry args={[0.006, 0.006, 0.5, 6]} />
+        <meshBasicMaterial color="#0a0c14" toneMapped={false} />
+      </mesh>
+      {/* Petites LEDs de statut dans le noir — équipement qui tourne la nuit */}
+      {RACK_LEDS.map(([x, y, z, color], i) => (
+        <mesh key={i} position={[x, y, z]}>
+          <circleGeometry args={[0.014, 8]} />
+          <meshBasicMaterial color={color} toneMapped={false} />
         </mesh>
       ))}
     </group>
