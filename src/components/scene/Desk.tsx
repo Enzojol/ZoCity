@@ -1,6 +1,9 @@
+import { useMemo } from 'react'
 import { RoundedBox } from '@react-three/drei'
+import { makeWoodGrainTexture } from '@/utils/textures'
 
 const WOOD = '#6a4e37'
+const WOOD_DARK = '#4a3325'
 const LEG = '#2b2e36'
 
 /**
@@ -8,10 +11,12 @@ const LEG = '#2b2e36'
  * centrée sur x=0 contre le mur du fond.
  */
 export function Desk() {
+  const grain = useMemo(() => makeWoodGrainTexture(WOOD, WOOD_DARK), [])
+
   return (
     <group position={[0, 0, -1.6]}>
       <RoundedBox args={[2.3, 0.045, 0.85]} radius={0.012} smoothness={3} position={[0, 0.758, 0]} castShadow receiveShadow>
-        <meshStandardMaterial color={WOOD} roughness={0.55} />
+        <meshStandardMaterial map={grain} roughness={0.5} />
       </RoundedBox>
       {/* Piètement : quatre pieds cylindriques légèrement rentrés */}
       {(

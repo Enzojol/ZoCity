@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Instances, Instance, RoundedBox } from '@react-three/drei'
+import { ContactShadow } from '@/components/scene/ContactShadow'
 
 /** Clavier : socle arrondi + touches instanciées (1 draw call pour toutes les touches). */
 export function Keyboard() {
@@ -15,6 +16,7 @@ export function Keyboard() {
 
   return (
     <group position={[0.02, 0.786, -1.44]} rotation={[0, 0.04, 0]}>
+      <ContactShadow radius={0.27} y={-0.0005} opacity={0.28} />
       <RoundedBox args={[0.48, 0.018, 0.18]} radius={0.006} smoothness={3} castShadow>
         <meshStandardMaterial color="#2a2e38" roughness={0.5} metalness={0.25} />
       </RoundedBox>
@@ -34,6 +36,7 @@ export function Keyboard() {
 export function MouseDevice() {
   return (
     <group position={[0.38, 0.796, -1.42]} rotation={[0, -0.15, 0]}>
+      <ContactShadow radius={0.05} y={-0.017} opacity={0.28} />
       <mesh rotation={[Math.PI / 2, 0, 0]} scale={[1, 1, 0.5]} castShadow>
         <capsuleGeometry args={[0.026, 0.04, 6, 16]} />
         <meshStandardMaterial color="#33384a" roughness={0.32} metalness={0.15} />

@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Html, RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 import { Interactive } from '@/components/scene/Interactive'
+import { ContactShadow } from '@/components/scene/ContactShadow'
 import { useExperience } from '@/stores/useExperience'
 import { makeGradientTexture } from '@/utils/textures'
 import { sfx } from '@/utils/audio'
@@ -84,6 +85,7 @@ export function Computer() {
 
   return (
     <Interactive id="projects" position={[-0.15, 1.02, -1.78]}>
+      <ContactShadow radius={0.13} y={-0.238} opacity={0.36} />
       {/* Pied : socle plat + colonne fine fixée au dos de la dalle */}
       <mesh position={[0, -0.232, 0.03]} castShadow>
         <cylinderGeometry args={[0.1, 0.115, 0.014, 28]} />
@@ -134,6 +136,7 @@ export function Tower() {
 
   return (
     <group position={[1.35, 0, -1.95]}>
+      <ContactShadow radius={0.28} y={0.001} opacity={0.4} />
       <RoundedBox args={[0.22, 0.5, 0.45]} radius={0.012} smoothness={3} position={[0, 0.26, 0]} castShadow>
         <meshStandardMaterial color="#1e212a" roughness={0.4} metalness={0.4} />
       </RoundedBox>

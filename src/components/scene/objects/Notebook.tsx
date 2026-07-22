@@ -1,10 +1,12 @@
 import { RoundedBox } from '@react-three/drei'
 import { Interactive } from '@/components/scene/Interactive'
+import { ContactShadow } from '@/components/scene/ContactShadow'
 
 /** Le carnet — section "Mon parcours". Carnet en cuir fermé, stylo posé à côté. */
 export function Notebook() {
   return (
     <Interactive id="about" position={[0.75, 0.797, -1.35]} rotation={[0, -0.22, 0]} hoverScale={1.05}>
+      <ContactShadow radius={0.14} y={-0.017} opacity={0.32} />
       {/* Pages : tranche crème visible sous la couverture */}
       <mesh position={[0.003, -0.003, 0]} castShadow>
         <boxGeometry args={[0.188, 0.014, 0.138]} />

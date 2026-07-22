@@ -1,5 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 import { Interactive } from '@/components/scene/Interactive'
 
@@ -61,23 +62,27 @@ export function Bookshelf() {
   return (
     <Interactive id="skills" position={[-1.95, 1.08, -2.28]} hoverScale={1.015}>
       {/* Panneau arrière */}
-      <mesh position={[0, 0.03, -0.135]}>
-        <boxGeometry args={[0.92, 1.66, 0.016]} />
+      <RoundedBox args={[0.92, 1.66, 0.016]} radius={0.004} smoothness={2} position={[0, 0.03, -0.135]}>
         <meshStandardMaterial color="#3a2d21" roughness={0.8} />
-      </mesh>
+      </RoundedBox>
       {/* Montants */}
       {[-0.45, 0.45].map((x) => (
-        <mesh key={x} position={[x, 0, 0]} castShadow>
-          <boxGeometry args={[0.038, 1.7, 0.3]} />
+        <RoundedBox key={x} args={[0.038, 1.7, 0.3]} radius={0.008} smoothness={2} position={[x, 0, 0]} castShadow>
           <meshStandardMaterial color="#4a3a2c" roughness={0.65} />
-        </mesh>
+        </RoundedBox>
       ))}
       {/* Étagères + dessus + socle */}
       {[...SHELF_Y, 0.85, -0.85].map((y) => (
-        <mesh key={y} position={[0, y - 0.16 + (y === -0.85 ? 0.14 : 0), 0]} castShadow>
-          <boxGeometry args={[0.94, 0.028, 0.3]} />
+        <RoundedBox
+          key={y}
+          args={[0.94, 0.028, 0.3]}
+          radius={0.006}
+          smoothness={2}
+          position={[0, y - 0.16 + (y === -0.85 ? 0.14 : 0), 0]}
+          castShadow
+        >
           <meshStandardMaterial color="#4a3a2c" roughness={0.65} />
-        </mesh>
+        </RoundedBox>
       ))}
       {/* Livres debout (certains penchés) */}
       {books.map((b, i) => (

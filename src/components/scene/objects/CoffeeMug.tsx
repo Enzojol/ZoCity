@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Interactive } from '@/components/scene/Interactive'
+import { ContactShadow } from '@/components/scene/ContactShadow'
 import { makeSteamTexture } from '@/utils/textures'
 
 const WISPS = [0, 0.37, 0.71]
@@ -25,6 +26,7 @@ export function CoffeeMug() {
 
   return (
     <Interactive id="interests" position={[0.62, 0.835, -1.62]} hoverScale={1.06}>
+      <ContactShadow radius={0.075} y={-0.056} opacity={0.34} />
       {/* Corps légèrement évasé */}
       <mesh castShadow>
         <cylinderGeometry args={[0.045, 0.038, 0.105, 28]} />

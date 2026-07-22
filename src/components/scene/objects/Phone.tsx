@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 import { Interactive } from '@/components/scene/Interactive'
+import { ContactShadow } from '@/components/scene/ContactShadow'
 
 /**
  * Le téléphone — section "Contact".
@@ -27,6 +28,7 @@ export function Phone() {
 
   return (
     <Interactive id="contact" position={[0.95, 0.794, -1.55]} rotation={[0, 0.35, 0]} hoverScale={1.07}>
+      <ContactShadow radius={0.09} y={-0.014} opacity={0.3} />
       <group ref={body}>
         <RoundedBox args={[0.076, 0.011, 0.158]} radius={0.005} smoothness={3} castShadow>
           <meshStandardMaterial color="#14161d" roughness={0.25} metalness={0.5} />
