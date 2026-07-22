@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { easing } from 'maath'
+import { useReducedMotion } from 'framer-motion'
 import { useExperience } from '@/stores/useExperience'
 import { ENTRY_POSE, REST_POSE, SECTIONS } from '@/components/scene/sections'
 
@@ -26,6 +27,7 @@ export function CameraRig({ isMobile }: { isMobile: boolean }) {
   const introT = useRef(0)
   const pos = useRef(new THREE.Vector3(...ENTRY_POSE.position))
   const target = useRef(new THREE.Vector3(...ENTRY_POSE.target))
+  const reducedMotion = useReducedMotion()
 
   useFrame((state, delta) => {
     const { introStep, focus, setIntroStep } = useExperience.getState()
@@ -49,7 +51,7 @@ export function CameraRig({ isMobile }: { isMobile: boolean }) {
       easing.damp3(target.current, pose.target, smooth, delta)
     }
 
-    const parallax = isMobile || introStep !== 'done' ? 0 : focus ? 0.028 : 0.085
+    const parallax = isMobile || reducedMotion || introStep !== 'done' ? 0 : focus ? 0.028 : 0.085
     state.camera.position.set(
       pos.current.x + state.pointer.x * parallax,
       pos.current.y + state.pointer.y * parallax * 0.6,

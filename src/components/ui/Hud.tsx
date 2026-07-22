@@ -63,6 +63,50 @@ function SoundToggle() {
   )
 }
 
+/** Bouton "passer l'intro", visible et cliquable dès le début du dolly-in. */
+function IntroSkip() {
+  const introStep = useExperience((s) => s.introStep)
+  const setIntroStep = useExperience((s) => s.setIntroStep)
+  if (introStep === 'done') return null
+  return (
+    <motion.button
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.6, duration: 0.5 }}
+      onClick={() => setIntroStep('done')}
+      className="glass-chip pointer-events-auto fixed bottom-6 right-6 z-50 rounded-full px-4 py-2 text-[12px] font-medium text-white/80 transition-colors hover:text-white"
+    >
+      Passer →
+    </motion.button>
+  )
+}
+
+/**
+ * Accès clavier aux sections : invisibles tant qu'aucun bouton n'a le focus
+ * (comme un lien d'évitement), pour ne pas polluer la scène des souris/tactile
+ * qui ont déjà le survol + clic 3D, ou les chips mobiles.
+ */
+function KeyboardNav() {
+  const open = useExperience((s) => s.open)
+  return (
+    <nav aria-label="Sections du portfolio" className="fixed left-4 top-4 z-50 flex flex-col gap-2">
+      {GUIDE_ORDER.map((id) => (
+        <button
+          key={id}
+          onClick={() => {
+            sfx.click()
+            sfx.open()
+            open(id)
+          }}
+          className="glass-chip sr-only rounded-full px-4 py-2 text-[13px] font-medium text-white/90 focus:not-sr-only"
+        >
+          {SECTIONS[id].label}
+        </button>
+      ))}
+    </nav>
+  )
+}
+
 /**
  * Sur mobile (cadrage portrait), certains objets sortent du champ :
  * cette rangée de chips garantit l'accès à toutes les sections.
@@ -109,9 +153,11 @@ export function Hud({ isMobile }: { isMobile: boolean }) {
               <SoundToggle />
             </div>
             {isMobile && <MobileNav />}
+            {!isMobile && <KeyboardNav />}
           </motion.div>
         )}
       </AnimatePresence>
+      <IntroSkip />
       <HoverLabel />
     </div>
   )
