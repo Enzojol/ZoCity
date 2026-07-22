@@ -5,6 +5,7 @@ import { Desk } from '@/components/scene/Desk'
 import { Lights } from '@/components/scene/lights/Lights'
 import { CameraRig } from '@/components/scene/camera/CameraRig'
 import { PostFX } from '@/components/scene/effects/PostFX'
+import { SceneEnvironment } from '@/components/scene/effects/SceneEnvironment'
 import { Computer, Tower } from '@/components/scene/objects/Computer'
 import { Keyboard, MouseDevice } from '@/components/scene/objects/Peripherals'
 import { Laptop } from '@/components/scene/objects/Laptop'
@@ -28,6 +29,7 @@ export function Experience({ isMobile }: { isMobile: boolean }) {
     >
       <color attach="background" args={['#10131b']} />
       <fog attach="fog" args={['#10131b', 8, 18]} />
+      <SceneEnvironment />
       <Suspense fallback={null}>
         <Room />
         <Desk />
