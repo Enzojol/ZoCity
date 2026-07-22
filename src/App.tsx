@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
-import { Experience } from '@/components/scene/Experience'
+import { lazy, Suspense, useEffect, useState } from 'react'
+import { motion, MotionConfig, useReducedMotion } from 'framer-motion'
 import { Hud } from '@/components/ui/Hud'
 import { Cursor } from '@/components/ui/Cursor'
 import { PanelRouter } from '@/components/ui/panels/PanelRouter'
@@ -8,6 +7,14 @@ import { useIsMobile } from '@/hooks/useIsMobile'
 import { useExperience } from '@/stores/useExperience'
 import { sfx } from '@/utils/audio'
 import { PROJECTS, SKILLS, CONTACT } from '@/data/content'
+
+/**
+ * Chargée dynamiquement : three.js/R3F/drei/postprocessing (~1.3 Mo) ne doit jamais
+ * faire partie du bundle initial. Sans ça le premier paint attend tout le moteur 3D.
+ */
+const Experience = lazy(() =>
+  import('@/components/scene/Experience').then((m) => ({ default: m.Experience })),
+)
 
 /**
  * Contenu texte réel (non décoratif) pour lecteurs d'écran et crawlers :
@@ -64,6 +71,9 @@ function OpeningFade() {
 export default function App() {
   const isMobile = useIsMobile()
   const soundOn = useExperience((s) => s.soundOn)
+  const introStep = useExperience((s) => s.introStep)
+  const setIntroStep = useExperience((s) => s.setIntroStep)
+  const reducedMotion = useReducedMotion()
 
   useEffect(() => {
     sfx.setMuted(!soundOn)
@@ -79,14 +89,47 @@ export default function App() {
     return () => window.removeEventListener('pointerdown', unlock)
   }, [])
 
+  // prefers-reduced-motion : le dolly-in caméra + la parallaxe souris sont le
+  // gros morceau de mouvement du site, on saute direct à l'état interactif.
+  useEffect(() => {
+    if (reducedMotion && introStep !== 'done') setIntroStep('done')
+  }, [reducedMotion, introStep, setIntroStep])
+
+  // Passer l'intro : clic/touche/Échap pendant enter/boot/greet.
+  // Le clic est intercepté en phase de capture + stoppé : sans ça, le même geste
+  // qui skip l'intro peut aussi "traverser" jusqu'à l'objet 3D sous le curseur
+  // (le raycaster R3F redevient actif dès que introStep passe à 'done', avant
+  // même que l'event 'click' natif de ce geste-là n'atteigne le canvas).
+  useEffect(() => {
+    if (introStep === 'done') return
+    const skipClick = (e: MouseEvent) => {
+      e.stopPropagation()
+      setIntroStep('done')
+    }
+    const skipKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' && e.key !== 'Enter' && e.key !== ' ') return
+      setIntroStep('done')
+    }
+    window.addEventListener('click', skipClick, { capture: true })
+    window.addEventListener('keydown', skipKey)
+    return () => {
+      window.removeEventListener('click', skipClick, { capture: true })
+      window.removeEventListener('keydown', skipKey)
+    }
+  }, [introStep, setIntroStep])
+
   return (
-    <div className="fixed inset-0">
-      <AccessibleIntro />
-      <Experience isMobile={isMobile} />
-      <Hud isMobile={isMobile} />
-      <PanelRouter isMobile={isMobile} />
-      {!isMobile && <Cursor />}
-      <OpeningFade />
-    </div>
+    <MotionConfig reducedMotion="user">
+      <div className="fixed inset-0">
+        <AccessibleIntro />
+        <Suspense fallback={null}>
+          <Experience isMobile={isMobile} />
+        </Suspense>
+        <Hud isMobile={isMobile} />
+        <PanelRouter isMobile={isMobile} />
+        {!isMobile && <Cursor />}
+        <OpeningFade />
+      </div>
+    </MotionConfig>
   )
 }

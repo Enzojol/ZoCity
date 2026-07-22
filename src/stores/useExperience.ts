@@ -8,6 +8,18 @@ export type SectionId = 'projects' | 'about' | 'skills' | 'contact' | 'socials' 
  */
 export type IntroStep = 'enter' | 'boot' | 'greet' | 'done'
 
+const INTRO_SEEN_KEY = 'zocity-intro-seen'
+
+/** Visite déjà faite : on saute direct à `done`, pas de dolly/boot/greet à rejouer à chaque reload. */
+function initialIntroStep(): IntroStep {
+  if (typeof window === 'undefined') return 'enter'
+  try {
+    return window.localStorage.getItem(INTRO_SEEN_KEY) ? 'done' : 'enter'
+  } catch {
+    return 'enter'
+  }
+}
+
 /** Order in which the lighting nudges the eye (spec: PC → bibliothèque → téléphone → le reste). */
 export const GUIDE_ORDER: SectionId[] = ['projects', 'skills', 'contact', 'about', 'socials', 'interests']
 
@@ -26,12 +38,21 @@ interface ExperienceState {
 }
 
 export const useExperience = create<ExperienceState>((set) => ({
-  introStep: 'enter',
+  introStep: initialIntroStep(),
   focus: null,
   hovered: null,
   visited: [],
   soundOn: true,
-  setIntroStep: (introStep) => set({ introStep }),
+  setIntroStep: (introStep) => {
+    if (introStep === 'done') {
+      try {
+        window.localStorage.setItem(INTRO_SEEN_KEY, '1')
+      } catch {
+        /* localStorage indisponible (navigation privée) : on rejoue l'intro, sans casser le site */
+      }
+    }
+    set({ introStep })
+  },
   setHovered: (hovered) => set({ hovered }),
   open: (id) =>
     set((s) => ({
