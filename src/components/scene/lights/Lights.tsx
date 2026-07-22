@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { easing } from 'maath'
+import { useReducedMotion } from 'framer-motion'
 import { nextHint, useExperience } from '@/stores/useExperience'
 import { SECTIONS } from '@/components/scene/sections'
 
@@ -19,19 +20,22 @@ export function Lights() {
   const hint = useRef<THREE.SpotLight>(null)
   const hintTarget = useMemo(() => new THREE.Object3D(), [])
   const hintAnchor = useRef(new THREE.Vector3(...SECTIONS.projects.anchor))
+  const reducedMotion = useReducedMotion()
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime
     const { introStep, focus, visited } = useExperience.getState()
+    // en reduced-motion on garde l'ambiance (couleurs, intensités) mais on coupe le scintillement
+    const wobble = reducedMotion ? 0 : 1
 
     if (lamp.current) {
       // vacillement d'ampoule à peine perceptible
-      lamp.current.intensity = 1.5 + Math.sin(t * 1.7) * 0.05 + Math.sin(t * 12.7) * 0.025
+      lamp.current.intensity = 1.5 + (Math.sin(t * 1.7) * 0.05 + Math.sin(t * 12.7) * 0.025) * wobble
     }
 
     if (screenGlow.current) {
       const on = introStep === 'enter' ? 0 : 1
-      const flicker = 0.85 + Math.sin(t * 2.3) * 0.06 + Math.sin(t * 9.1) * 0.02
+      const flicker = 0.85 + (Math.sin(t * 2.3) * 0.06 + Math.sin(t * 9.1) * 0.02) * wobble
       screenGlow.current.intensity = THREE.MathUtils.damp(screenGlow.current.intensity, on * flicker, 2.5, delta)
     }
 

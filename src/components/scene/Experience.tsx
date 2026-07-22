@@ -42,7 +42,10 @@ export function Experience({ isMobile }: { isMobile: boolean }) {
         <Tower />
         <Keyboard />
         <MouseDevice />
-        <Laptop />
+        {/* GLTF+Draco : Suspense dédié pour ne jamais bloquer le reste de la pièce derrière son chargement */}
+        <Suspense fallback={null}>
+          <Laptop />
+        </Suspense>
         <DeskLamp />
         <Plant />
         <Decorations />
