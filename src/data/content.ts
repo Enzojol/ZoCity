@@ -9,11 +9,24 @@ export interface Project {
   tech: string[]
   github?: string
   demo?: string
+  /** Page de présentation du projet, servie depuis public/. */
+  caseStudy?: string
+  /** Visuel de la carte, à la place du dégradé. */
+  image?: string
   /** Dégradé utilisé comme visuel tant qu'il n'y a pas de screenshot. */
   gradient: string
 }
 
 export const PROJECTS: Project[] = [
+  {
+    title: 'Gymzo',
+    description:
+      'Un carnet de musculation mis en scène comme un HUD de jeu : un corps scanné s’allume muscle par muscle, avec un feed privé pour ton groupe de potes.',
+    tech: ['React Native', 'Expo', 'TypeScript', 'FastAPI', 'PostgreSQL'],
+    caseStudy: '/gymzo/',
+    image: '/gymzo/cover.jpg',
+    gradient: 'linear-gradient(135deg, #0b0a08 0%, #ff5a1f 60%, #ff2e7e 100%)',
+  },
   {
     title: 'ZoCity',
     description:
@@ -21,14 +34,6 @@ export const PROJECTS: Project[] = [
     tech: ['React', 'Three.js', 'R3F', 'TypeScript', 'Zustand'],
     github: 'https://github.com/Enzojol/ZoCity',
     gradient: 'linear-gradient(135deg, #1d2b4f 0%, #6d5ae8 55%, #ff9e6d 100%)',
-  },
-  {
-    title: 'HiveZo',
-    description:
-      'Plateforme web personnelle en construction : interface Liquid Glass, fonds shader animés et briques IA issues de mon homelab. Repo en cours.',
-    tech: ['Next.js', 'Tailwind', 'ShaderGradient', 'IA'],
-    github: 'https://github.com/Enzojol/HiveZo',
-    gradient: 'linear-gradient(135deg, #123c3a 0%, #1f8a70 55%, #ffd166 100%)',
   },
 ]
 

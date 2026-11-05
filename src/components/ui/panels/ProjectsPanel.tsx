@@ -14,7 +14,11 @@ export function ProjectsPanel() {
           animate="animate"
           className="glass-card group overflow-hidden rounded-2xl"
         >
-          <div className="h-28 w-full" style={{ background: project.gradient }} />
+          {project.image ? (
+            <img src={project.image} alt="" loading="lazy" className="h-28 w-full object-cover" />
+          ) : (
+            <div className="h-28 w-full" style={{ background: project.gradient }} />
+          )}
           <div className="p-5">
             <h3 className="text-[15px] font-semibold text-white">{project.title}</h3>
             <p className="mt-1.5 text-[13px] leading-relaxed text-white/60">{project.description}</p>
@@ -26,6 +30,16 @@ export function ProjectsPanel() {
               ))}
             </div>
             <div className="mt-4 flex gap-3">
+              {project.caseStudy && (
+                <a
+                  href={project.caseStudy}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[12px] font-medium text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+                >
+                  Voir le projet ↗
+                </a>
+              )}
               {project.github && (
                 <a
                   href={project.github}
