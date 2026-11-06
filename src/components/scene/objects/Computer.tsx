@@ -1,77 +1,40 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Html, RoundedBox } from '@react-three/drei'
+import { RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 import { Interactive } from '@/components/scene/Interactive'
 import { ContactShadow } from '@/components/scene/ContactShadow'
 import { useExperience } from '@/stores/useExperience'
-import { makeGradientTexture } from '@/utils/textures'
+import { IDENTITY } from '@/data/content'
+import { makeScreenTexture } from '@/utils/textures'
 import { sfx } from '@/utils/audio'
 
-const GREETINGS = ['Hello.', 'Welcome.', 'Explore my workspace.']
+const BOOT_MS = 400
+const GREET_MS = 1200
 
-/** Séquence d'intro affichée sur l'écran (HTML réel, jamais une texture). */
-function ScreenIntro() {
+/** Rythme de l'intro une fois la caméra arrivée : l'écran s'allume, le temps de lire le nom, puis recul. */
+function useIntroTimeline() {
   const introStep = useExperience((s) => s.introStep)
   const setIntroStep = useExperience((s) => s.setIntroStep)
-  const [message, setMessage] = useState<string | null>(null)
 
   useEffect(() => {
     if (introStep === 'boot') {
       sfx.boot()
-      const id = window.setTimeout(() => setIntroStep('greet'), 1200)
+      const id = window.setTimeout(() => setIntroStep('greet'), BOOT_MS)
       return () => window.clearTimeout(id)
     }
     if (introStep === 'greet') {
-      const timers = GREETINGS.map((m, i) => window.setTimeout(() => setMessage(m), i * 1900))
-      timers.push(
-        window.setTimeout(() => {
-          setMessage(null)
-          setIntroStep('done')
-        }, GREETINGS.length * 1900 + 1400),
-      )
-      return () => timers.forEach(window.clearTimeout)
+      const id = window.setTimeout(() => setIntroStep('done'), GREET_MS)
+      return () => window.clearTimeout(id)
     }
   }, [introStep, setIntroStep])
-
-  if (introStep === 'enter' || introStep === 'done') return null
-
-  return (
-    <Html transform position={[0, 0.1, 0.022]} scale={0.02} wrapperClass="screen-html" zIndexRange={[20, 0]}>
-      <div
-        style={{
-          width: 560,
-          height: 300,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#cfe3ff',
-          fontSize: 34,
-          letterSpacing: '0.02em',
-          textShadow: '0 0 18px rgba(158, 207, 255, 0.6)',
-        }}
-      >
-        <span key={message ?? 'cursor'} style={{ animation: 'screen-fade 0.8s ease both' }}>
-          {message ?? '▍'}
-        </span>
-        <style>{'@keyframes screen-fade { from { opacity: 0 } to { opacity: 1 } }'}</style>
-      </div>
-    </Html>
-  )
 }
 
 /** Moniteur principal — section "Mes projets". L'écran scintille très légèrement. */
 export function Computer() {
   const screen = useRef<THREE.Mesh>(null)
-  const wallpaper = useMemo(
-    () =>
-      makeGradientTexture([
-        [0, '#1c2f55'],
-        [0.55, '#31305e'],
-        [1, '#141a2e'],
-      ]),
-    [],
-  )
+  const wallpaper = useMemo(() => makeScreenTexture(IDENTITY), [])
+  useIntroTimeline()
 
   useFrame((state, delta) => {
     const mesh = screen.current
@@ -115,7 +78,6 @@ export function Computer() {
         <circleGeometry args={[0.0035, 10]} />
         <meshStandardMaterial color="#0a0c10" emissive="#9ecfff" emissiveIntensity={1.4} toneMapped={false} />
       </mesh>
-      <ScreenIntro />
     </Interactive>
   )
 }

@@ -6,7 +6,7 @@ import { PanelRouter } from '@/components/ui/panels/PanelRouter'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { useExperience } from '@/stores/useExperience'
 import { sfx } from '@/utils/audio'
-import { PROJECTS, SKILLS, CONTACT } from '@/data/content'
+import { CONTACT, IDENTITY, PROJECTS, SKILLS } from '@/data/content'
 
 /**
  * Chargée dynamiquement : three.js/R3F/drei/postprocessing (~1.3 Mo) ne doit jamais
@@ -24,11 +24,15 @@ const Experience = lazy(() =>
 function AccessibleIntro() {
   return (
     <div className="sr-only">
-      <h1>Enzo Jolivet — Développeur Full-Stack</h1>
-      <p>
-        Portfolio 3D interactif : un bureau immersif où chaque objet ouvre une section
-        (projets, compétences, parcours, contact).
-      </p>
+      <h1>
+        {IDENTITY.name} — {IDENTITY.role}, {IDENTITY.specialty}
+      </h1>
+      <p>{IDENTITY.pitch}</p>
+      <ul>
+        {IDENTITY.proof.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ul>
       <h2>Projets</h2>
       <ul>
         {PROJECTS.map((p) => (
@@ -61,7 +65,7 @@ function OpeningFade() {
     <motion.div
       initial={{ opacity: 1 }}
       animate={{ opacity: 0 }}
-      transition={{ duration: 2.2, ease: 'easeOut' }}
+      transition={{ duration: 1.4, ease: 'easeOut' }}
       onAnimationComplete={() => setGone(true)}
       className="pointer-events-none fixed inset-0 z-[60] bg-[#0d1016]"
     />

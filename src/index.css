@@ -78,10 +78,3 @@ body,
 .panel-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
-
-/* The intro text typed on the PC screen (rendered via drei <Html transform>) */
-.screen-html {
-  pointer-events: none;
-  user-select: none;
-  font-family: 'SF Mono', ui-monospace, 'Cascadia Code', Menlo, monospace;
-}

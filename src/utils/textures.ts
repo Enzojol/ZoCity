@@ -15,6 +15,52 @@ export function makeGradientTexture(stops: Array<[number, string]>, size = 256):
   return tex
 }
 
+/** Écran du PC : fond dégradé + carte d'identité, assez grande pour rester lisible depuis le plan d'ensemble. */
+export function makeScreenTexture(identity: {
+  name: string
+  role: string
+  specialty: string
+  proof: string[]
+}): THREE.CanvasTexture {
+  const width = 1024
+  const height = 586
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')!
+  const grad = ctx.createLinearGradient(0, 0, 0, height)
+  grad.addColorStop(0, '#1c2f55')
+  grad.addColorStop(0.55, '#31305e')
+  grad.addColorStop(1, '#141a2e')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, width, height)
+
+  const font = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+  const left = 72
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillStyle = '#f4f7ff'
+  ctx.font = `700 108px ${font}`
+  ctx.fillText(identity.name, left, 150)
+  ctx.fillStyle = '#9ecfff'
+  ctx.font = `500 48px ${font}`
+  ctx.fillText(identity.role, left, 222)
+  ctx.font = `400 40px ${font}`
+  ctx.fillText(identity.specialty, left, 274)
+
+  ctx.fillStyle = '#d5e2f7'
+  ctx.font = `400 32px ${font}`
+  identity.proof.forEach((line, i) => ctx.fillText(line, left, 352 + i * 44))
+
+  ctx.fillStyle = '#ffc998'
+  ctx.font = `600 32px ${font}`
+  ctx.fillText('Voir mes projets →', left, 526)
+
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.colorSpace = THREE.SRGBColorSpace
+  tex.anisotropy = 8
+  return tex
+}
+
 /** Halo blanc doux pour les plans de vapeur au-dessus de la tasse. */
 export function makeSteamTexture(): THREE.CanvasTexture {
   const canvas = document.createElement('canvas')

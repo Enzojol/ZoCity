@@ -1,7 +1,15 @@
 /**
- * Contenu éditorial du portfolio (source : CV Enzo Jolivet) —
- * rien ici n'impacte la scène 3D.
+ * Contenu éditorial du portfolio (source : CV Enzo Jolivet).
+ * Seul IDENTITY apparaît aussi dans la scène 3D, sur l'écran du PC.
  */
+
+export const IDENTITY = {
+  name: 'Enzo Jolivet',
+  role: 'Chef de projet technique',
+  specialty: 'IA, Data & Automatisation',
+  pitch: 'Du cadrage au déploiement terrain : je pilote le produit et je construis les outils.',
+  proof: ['31 magasins déployés', '98 % de précision d’inventaire', 'Disponibilité produit : 70 % → 95 %'],
+}
 
 export interface Project {
   title: string
@@ -21,7 +29,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'Gymzo',
     description:
-      'Un carnet de musculation mis en scène comme un HUD de jeu : un corps scanné s’allume muscle par muscle, avec un feed privé pour ton groupe de potes.',
+      'Un carnet de musculation mis en scène comme un HUD de jeu : un corps scanné s’allume muscle par muscle, avec un feed privé entre amis.',
     tech: ['React Native', 'Expo', 'TypeScript', 'FastAPI', 'PostgreSQL'],
     caseStudy: '/gymzo/',
     image: '/gymzo/cover.jpg',
@@ -30,7 +38,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'ZoCity',
     description:
-      'Ce portfolio : un bureau 3D immersif où chaque objet ouvre une section. React Three Fiber, éclairage narratif, interface Liquid Glass. Repo en cours.',
+      'Ce portfolio : un bureau 3D immersif où chaque objet ouvre une section. React Three Fiber, éclairage narratif, interface Liquid Glass.',
     tech: ['React', 'Three.js', 'R3F', 'TypeScript', 'Zustand'],
     github: 'https://github.com/Enzojol/ZoCity',
     gradient: 'linear-gradient(135deg, #1d2b4f 0%, #6d5ae8 55%, #ff9e6d 100%)',
@@ -44,10 +52,15 @@ export interface SkillCategory {
 }
 
 export const SKILLS: SkillCategory[] = [
-  { name: 'Frontend', accent: '#7ec3ff', items: ['React', 'React Native', 'Angular', 'TypeScript', 'HTML/CSS'] },
-  { name: 'Backend', accent: '#8ef0c0', items: ['Python', 'Java (Spring Boot)', 'PHP (Symfony)', 'C / C++'] },
-  { name: 'Data & ML', accent: '#c3a6ff', items: ['TensorFlow', 'SQL', 'MongoDB', 'Grafana', 'CI/CD (GitHub Actions)'] },
-  { name: 'Produit & Outils', accent: '#ffb066', items: ['Jira', 'Linear', 'Notion', 'Adobe XD', 'Git', 'Klaviyo'] },
+  {
+    name: 'Pilotage & Produit',
+    accent: '#ffb066',
+    items: ['Cadrage fonctionnel', 'Roadmap & backlog', 'Maquettes (Adobe XD)', 'Jira', 'Linear', 'Notion', 'Klaviyo'],
+  },
+  { name: 'Frontend', accent: '#7ec3ff', items: ['React', 'React Native', 'Expo', 'Angular', 'TypeScript', 'HTML/CSS'] },
+  { name: 'Backend', accent: '#8ef0c0', items: ['Python', 'FastAPI', 'Java (Spring Boot)', 'PHP (Symfony)', 'C / C++'] },
+  { name: 'Data & ML', accent: '#c3a6ff', items: ['SQL', 'PostgreSQL', 'MongoDB', 'Autone', 'TensorFlow'] },
+  { name: 'Infra & Ops', accent: '#7fe3e0', items: ['Docker', 'Proxmox', 'Cloudflare Tunnel', 'GitHub Actions', 'Grafana', 'Git'] },
   { name: '3D & Créatif', accent: '#ff9db8', items: ['Three.js', 'React Three Fiber', 'GLTF', 'Motion design'] },
 ]
 

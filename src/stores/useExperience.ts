@@ -20,7 +20,7 @@ function initialIntroStep(): IntroStep {
   }
 }
 
-/** Order in which the lighting nudges the eye (spec: PC → bibliothèque → téléphone → le reste). */
+/** Order in which the lighting nudges the eye: PC → bibliothèque → téléphone → le reste. */
 export const GUIDE_ORDER: SectionId[] = ['projects', 'skills', 'contact', 'about', 'socials', 'interests']
 
 interface ExperienceState {
@@ -42,7 +42,7 @@ export const useExperience = create<ExperienceState>((set) => ({
   focus: null,
   hovered: null,
   visited: [],
-  soundOn: true,
+  soundOn: false,
   setIntroStep: (introStep) => {
     if (introStep === 'done') {
       try {

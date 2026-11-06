@@ -1,8 +1,55 @@
 import { useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { GUIDE_ORDER, useExperience } from '@/stores/useExperience'
+import { GUIDE_ORDER, useExperience, type SectionId } from '@/stores/useExperience'
 import { SECTIONS } from '@/components/scene/sections'
+import { CONTACT, IDENTITY } from '@/data/content'
 import { sfx } from '@/utils/audio'
+
+/**
+ * Qui, quoi, preuves : lisible sans cliquer sur rien. Sur desktop, posé sur le sol
+ * sombre sous le bureau ; sur mobile, dans le mur vide au-dessus.
+ * Masqué aux lecteurs d'écran : AccessibleIntro porte déjà ce texte.
+ */
+function Identity({ isMobile }: { isMobile: boolean }) {
+  return (
+    <div aria-hidden className={isMobile ? 'absolute left-5 right-20 top-5' : 'absolute bottom-7 left-8 max-w-[560px]'}>
+      <div className={`font-semibold tracking-tight text-white ${isMobile ? 'text-[26px] leading-tight' : 'text-[44px] leading-none'}`}>
+        {IDENTITY.name}
+      </div>
+      <div className={`font-medium text-[#ffc998] ${isMobile ? 'mt-1 text-[14px] leading-snug' : 'mt-3 text-[20px]'}`}>
+        {IDENTITY.role} — {IDENTITY.specialty}
+      </div>
+      <p className={`text-white/70 ${isMobile ? 'mt-2 text-[13px] leading-snug' : 'mt-2.5 text-[15px] leading-relaxed'}`}>{IDENTITY.pitch}</p>
+      <ul className={`flex flex-wrap gap-x-4 gap-y-1 text-white/65 ${isMobile ? 'mt-2 text-[12px]' : 'mt-3 text-[13px]'}`}>
+        {IDENTITY.proof.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function openSection(open: (id: SectionId) => void, id: SectionId) {
+  sfx.click()
+  sfx.open()
+  open(id)
+}
+
+/** Les deux actions qu'un recruteur cherche : toujours visibles, sans passer par le décor. */
+function PrimaryActions() {
+  const open = useExperience((s) => s.open)
+  const chip = 'glass-chip pointer-events-auto rounded-full px-5 py-2.5 text-[13px] font-medium text-white/90 transition-colors hover:text-white'
+  return (
+    <div className="absolute right-6 top-6 flex gap-2">
+      <a href={CONTACT.cv} target="_blank" rel="noreferrer" className={chip}>
+        CV (PDF)
+      </a>
+      <button onClick={() => openSection(open, 'contact')} className={chip}>
+        Contact
+      </button>
+    </div>
+  )
+}
 
 /** Étiquette élégante qui suit le curseur au survol d'un objet. */
 function HoverLabel() {
@@ -93,11 +140,7 @@ function KeyboardNav() {
       {GUIDE_ORDER.map((id) => (
         <button
           key={id}
-          onClick={() => {
-            sfx.click()
-            sfx.open()
-            open(id)
-          }}
+          onClick={() => openSection(open, id)}
           className="glass-chip sr-only rounded-full px-4 py-2 text-[13px] font-medium text-white/90 focus:not-sr-only"
         >
           {SECTIONS[id].label}
@@ -109,27 +152,21 @@ function KeyboardNav() {
 
 /**
  * Sur mobile (cadrage portrait), certains objets sortent du champ :
- * cette rangée de chips garantit l'accès à toutes les sections.
+ * ces chips garantissent l'accès à toutes les sections, sans rien cacher hors écran.
  */
 function MobileNav() {
   const open = useExperience((s) => s.open)
+  const chip = 'glass-chip rounded-full px-4 py-2 text-[12px] font-medium text-white/85'
   return (
-    <div className="pointer-events-auto absolute inset-x-0 bottom-5 flex justify-center px-4">
-      <div className="flex max-w-full gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
-        {GUIDE_ORDER.map((id) => (
-          <button
-            key={id}
-            onClick={() => {
-              sfx.click()
-              sfx.open()
-              open(id)
-            }}
-            className="glass-chip shrink-0 rounded-full px-4 py-2 text-[12px] font-medium text-white/85"
-          >
-            {SECTIONS[id].label}
-          </button>
-        ))}
-      </div>
+    <div className="pointer-events-auto absolute inset-x-0 bottom-5 flex flex-wrap justify-center gap-2 px-4">
+      <a href={CONTACT.cv} target="_blank" rel="noreferrer" className={chip}>
+        CV (PDF)
+      </a>
+      {GUIDE_ORDER.map((id) => (
+        <button key={id} onClick={() => openSection(open, id)} className={chip}>
+          {SECTIONS[id].label}
+        </button>
+      ))}
     </div>
   )
 }
@@ -146,9 +183,8 @@ export function Hud({ isMobile }: { isMobile: boolean }) {
             transition={{ duration: 1.2 }}
             className="absolute inset-0"
           >
-            <div className="absolute left-6 top-6 select-none text-sm font-semibold tracking-[0.25em] text-white/70">
-              ENZO
-            </div>
+            <Identity isMobile={isMobile} />
+            {!isMobile && <PrimaryActions />}
             <div className={isMobile ? 'absolute right-4 top-5' : 'absolute bottom-6 right-6'}>
               <SoundToggle />
             </div>

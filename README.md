@@ -3,9 +3,8 @@
 **🔴 Démo live : [enzojolivet.com](https://enzojolivet.com)**
 
 Portfolio immersif : on n'arrive pas sur un site, on entre dans un bureau de
-développeur en fin de journée. La caméra traverse la pièce, le PC s'allume
-(`Hello. — Welcome. — Explore my workspace.`), puis chaque objet du bureau
-ouvre une section :
+développeur en fin de journée. La caméra traverse la pièce, le PC s'allume sur
+mon nom et mes résultats, puis chaque objet du bureau ouvre une section :
 
 ![Le bureau en fin de journée — la lumière guide le regard](docs/screenshots/desk-hero.png)
 
@@ -18,8 +17,9 @@ ouvre une section :
 | La fenêtre      | Mes réseaux       |
 | La tasse        | Centres d'intérêt |
 
-Aucun bouton « cliquez ici » : la lumière guide le regard (l'écran d'abord,
-puis un spot discret qui respire sur le prochain objet non visité), les objets
+L'identité, le CV et le contact restent visibles en permanence. Pour le reste,
+la lumière guide le regard (l'écran d'abord, puis un spot discret qui respire
+sur le prochain objet non visité), les objets
 vivent (vapeur du café, LED qui respire, plante qui oscille, notification du
 téléphone), et le survol révèle une étiquette élégante.
 
@@ -34,7 +34,7 @@ téléphone), et le survol révèle une étiquette élégante.
 - Zustand (état de l'expérience), Framer Motion (panneaux), Tailwind CSS v4
 - Panneaux « Liquid Glass » en CSS pur (`backdrop-filter`) — pas de WebGL de
   réfraction, budget 60 FPS oblige
-- Sons synthétisés en WebAudio (aucun asset audio), désactivables
+- Sons synthétisés en WebAudio (aucun asset audio), coupés par défaut
 
 ## Développement
 
@@ -61,7 +61,7 @@ src/
   hooks/  utils/    # helpers (responsive, audio, textures canvas)
 ```
 
-Décisions notables : géométrie 100 % procédurale (primitives Three.js, pas de
-GLTF à télécharger), textures générées au runtime sur canvas, une seule source
-d'ombres. Sur mobile, le post-processing est coupé et une rangée de chips
-donne accès aux sections que le cadrage portrait sort du champ.
+Décisions notables : géométrie procédurale (primitives Three.js), sauf le laptop
+en GLTF compressé Draco, textures générées au runtime sur canvas, une seule
+source d'ombres. Sur mobile, le post-processing est coupé et des chips donnent
+accès aux sections que le cadrage portrait sort du champ.
