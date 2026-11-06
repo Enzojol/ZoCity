@@ -19,12 +19,7 @@ function Identity({ isMobile }: { isMobile: boolean }) {
       <div className={`font-medium text-[#ffc998] ${isMobile ? 'mt-1 text-[14px] leading-snug' : 'mt-3 text-[20px]'}`}>
         {IDENTITY.role} — {IDENTITY.specialty}
       </div>
-      <p className={`text-white/70 ${isMobile ? 'mt-2 text-[13px] leading-snug' : 'mt-2.5 text-[15px] leading-relaxed'}`}>{IDENTITY.pitch}</p>
-      <ul className={`flex flex-wrap gap-x-4 gap-y-1 text-white/65 ${isMobile ? 'mt-2 text-[12px]' : 'mt-3 text-[13px]'}`}>
-        {IDENTITY.proof.map((line) => (
-          <li key={line}>{line}</li>
-        ))}
-      </ul>
+      <div className={`font-semibold text-white ${isMobile ? 'mt-2 text-[15px]' : 'mt-3 text-[18px]'}`}>{IDENTITY.domains.join(' · ')}</div>
     </div>
   )
 }

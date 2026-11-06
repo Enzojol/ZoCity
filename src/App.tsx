@@ -27,12 +27,7 @@ function AccessibleIntro() {
       <h1>
         {IDENTITY.name} — {IDENTITY.role}, {IDENTITY.specialty}
       </h1>
-      <p>{IDENTITY.pitch}</p>
-      <ul>
-        {IDENTITY.proof.map((line) => (
-          <li key={line}>{line}</li>
-        ))}
-      </ul>
+      <p>{IDENTITY.domains.join(', ')}.</p>
       <h2>Projets</h2>
       <ul>
         {PROJECTS.map((p) => (

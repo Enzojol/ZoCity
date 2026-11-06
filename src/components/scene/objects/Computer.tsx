@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { Interactive } from '@/components/scene/Interactive'
 import { ContactShadow } from '@/components/scene/ContactShadow'
 import { useExperience } from '@/stores/useExperience'
-import { IDENTITY } from '@/data/content'
+import { IDENTITY, PROJECTS } from '@/data/content'
 import { makeScreenTexture } from '@/utils/textures'
 import { sfx } from '@/utils/audio'
 
@@ -33,7 +33,7 @@ function useIntroTimeline() {
 /** Moniteur principal — section "Mes projets". L'écran scintille très légèrement. */
 export function Computer() {
   const screen = useRef<THREE.Mesh>(null)
-  const wallpaper = useMemo(() => makeScreenTexture(IDENTITY), [])
+  const wallpaper = useMemo(() => makeScreenTexture(IDENTITY, PROJECTS), [])
   useIntroTimeline()
 
   useFrame((state, delta) => {

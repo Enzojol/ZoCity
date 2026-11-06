@@ -4,7 +4,7 @@
 
 Portfolio immersif : on n'arrive pas sur un site, on entre dans un bureau de
 développeur en fin de journée. La caméra traverse la pièce, le PC s'allume sur
-mon nom et mes résultats, puis chaque objet du bureau ouvre une section :
+mon nom et mes projets, puis chaque objet du bureau ouvre une section :
 
 ![Le bureau en fin de journée — la lumière guide le regard](docs/screenshots/desk-hero.png)
 
