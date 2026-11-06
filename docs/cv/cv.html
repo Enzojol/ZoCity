@@ -1,0 +1,260 @@
+<!doctype html>
+<!--
+  Source du CV. Pour régénérer le PDF depuis la racine du repo :
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --no-pdf-header-footer \
+    --print-to-pdf=public/cv-enzo-jolivet.pdf "file://$PWD/docs/cv/cv.html"
+-->
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CV — Enzo Jolivet</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      :root {
+        --ink: #171a22;
+        --body: #3a3f4b;
+        --muted: #6c7280;
+        --line: #dfe2e8;
+        --night: #10131b;
+        --accent: #c2541d;
+        --accent-soft: #ffc998;
+        --tint: #f5f3ef;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      html,
+      body {
+        width: 210mm;
+        height: 297mm;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #fff;
+        color: var(--body);
+        font: 400 9.4pt/1.42 "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 8mm;
+        padding: 8.5mm 12mm 7mm;
+        background: var(--night);
+        color: #d7dbe5;
+      }
+      h1 {
+        color: #fff;
+        font-size: 25pt;
+        font-weight: 700;
+        letter-spacing: -0.015em;
+        line-height: 1.05;
+      }
+      .title {
+        margin-top: 1.5mm;
+        color: var(--accent-soft);
+        font-size: 11pt;
+        font-weight: 500;
+      }
+      .contact {
+        flex: none;
+        list-style: none;
+        font-size: 8pt;
+        line-height: 1.5;
+        text-align: right;
+      }
+      .columns {
+        flex: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 54mm;
+        gap: 7mm;
+        padding: 6mm 12mm 7mm;
+        min-height: 0;
+      }
+      h2 {
+        margin-bottom: 1.8mm;
+        padding-bottom: 0.8mm;
+        border-bottom: 1.2pt solid var(--accent);
+        color: var(--ink);
+        font-size: 8pt;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      section + section {
+        margin-top: 4.5mm;
+      }
+      .job + .job {
+        margin-top: 3.4mm;
+      }
+      .job-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 4mm;
+      }
+      h3 {
+        color: var(--ink);
+        font-size: 9.4pt;
+        font-weight: 600;
+      }
+      .place {
+        color: var(--accent);
+        font-weight: 500;
+      }
+      .date {
+        flex: none;
+        color: var(--muted);
+        font-size: 8pt;
+      }
+      ul.bullets {
+        margin-top: 0.8mm;
+        list-style: none;
+      }
+      ul.bullets li {
+        position: relative;
+        padding-left: 3mm;
+      }
+      ul.bullets li + li {
+        margin-top: 0.7mm;
+      }
+      ul.bullets li::before {
+        content: "";
+        position: absolute;
+        left: 0.4mm;
+        top: 1.55mm;
+        width: 1mm;
+        height: 1mm;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      aside dt {
+        margin-top: 1.7mm;
+        color: var(--ink);
+        font-weight: 600;
+      }
+      aside dt:first-child {
+        margin-top: 0;
+      }
+      aside p + p {
+        margin-top: 1.5mm;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Enzo Jolivet</h1>
+        <p class="title">Chef de Projet IT · Expert Digital</p>
+      </div>
+      <ul class="contact">
+        <li>Paris</li>
+        <li>07 89 50 75 45</li>
+        <li><a href="mailto:enzojol@hotmail.com">enzojol@hotmail.com</a></li>
+      </ul>
+    </header>
+
+    <div class="columns">
+      <main>
+        <section>
+          <h2>Profil</h2>
+          <p>
+            Chef de projet IT avec 4 ans d'expérience, du cadrage fonctionnel au déploiement terrain. Profil hybride qui
+            conçoit et code : pilotage produit, automatisation transverse et coordination d'équipes, avec des résultats
+            business mesurables.
+          </p>
+        </section>
+
+        <section>
+          <h2>Expérience professionnelle</h2>
+          <div class="job">
+            <div class="job-head">
+              <h3><span class="place">Lunettes Pour Tous</span> — Chef de Projet IT</h3>
+              <span class="date">Paris | Nov. 2023 – Avr. 2026</span>
+            </div>
+            <ul class="bullets">
+              <li>Piloté de bout en bout la roadmap de l'application de gestion de stock RFID (React / JS) : cadrage fonctionnel, rédaction de la documentation, création des maquettes visuelles, gestion du backlog (tickets), jusqu'au déploiement en centre logistique et dans les 31 magasins. Précision inventaire à 98 %, stock fiabilisé en temps réel et arrêt du recours au prestataire d'inventaire externe.</li>
+              <li>Piloté l'implémentation d'Autone (Machine Learning) de A à Z : prise en main de l'outil, paramétrage et automatisation complète des réapprovisionnements entrepôt vers magasins. Disponibilité produit portée de 70 % à 95 %.</li>
+              <li>Développé un script de transformation automatique des commandes XML vers des fournisseurs alternatifs, avec relance automatisée : ~20 commandes/semaine <span style="white-space: nowrap">re-routées</span> sans traitement manuel, délais sécurisés en cas de rupture fournisseur.</li>
+              <li>Développé des scripts Python d'automatisation multi-équipes : exports de CA automatisés (Compta), intégration Klaviyo pour les SMS promotionnels (Com), extractions structurées pour l'instruction de dossiers RH réglementaires.</li>
+              <li>Structuré le support IT de l'ensemble des collaborateurs via Freshdesk (~80 tickets/semaine, niveaux 1 &amp; 2) ; développé un CLI interne automatisant le traitement des incidents récurrents.</li>
+              <li>Supervisé l'ensemble des opérations du centre logistique (16 collaborateurs) : optimisation des plannings, mise en place des contrôles qualité au laboratoire avec étape de vérification supplémentaire, +25 % de productivité.</li>
+              <li>Géré les achats fournisseurs directs et la coordination des approvisionnements (~500 K€ / 500 000 unités) : alignement des commandes sur les prévisions de vente, réduction des écarts de stock de 15 %.</li>
+            </ul>
+          </div>
+
+          <div class="job">
+            <div class="job-head">
+              <h3><span class="place">Orchestra</span> — Développeur Full-Stack (alternance)</h3>
+              <span class="date">Paris | Jan. 2022 – Août 2022</span>
+            </div>
+            <ul class="bullets">
+              <li>Développé une application interne de visualisation de données (React / Angular) permettant l'accès aux insights en temps réel et réduisant le temps de génération des rapports.</li>
+              <li>Optimisé les workflows de support client via Jira (Java Spring) : délais de résolution accélérés, satisfaction client en hausse.</li>
+              <li>Mis en place un monitoring bout-en-bout avec Grafana : détection proactive des anomalies, temps d'indisponibilité réduit de 30 %.</li>
+            </ul>
+          </div>
+
+          <div class="job">
+            <div class="job-head">
+              <h3><span class="place">Sikiwis Digitalizr</span> — Développeur Full-Stack (alternance)</h3>
+              <span class="date">Paris | Juil. 2021 – Déc. 2021</span>
+            </div>
+            <ul class="bullets">
+              <li>Conçu une plateforme ERP (PHP / Symfony / JS) pour le secteur des métaux précieux : architectures modulaires, validation auto des données → saisie manuelle réduite de 40 %.</li>
+              <li>Conduit des consultations clients pour personnaliser l'ERP ; modules sur mesure livrés → +15 % de satisfaction client et renforcement des collaborations.</li>
+            </ul>
+          </div>
+        </section>
+      </main>
+
+      <aside>
+        <section>
+          <h2>Formation</h2>
+          <p><strong>EPITECH Paris</strong> Paris, France</p>
+          <p>Expert en Management des Systèmes d'Information (Bac+5) Diplômé : Juin 2024</p>
+          <p>Responsable de Projet Web &amp; Mobile (Bac+3/4) Diplômé : Avr. 2022</p>
+        </section>
+
+        <section>
+          <h2>Compétences techniques</h2>
+          <dl>
+            <dt>Front-End</dt>
+            <dd>React, React Native, Angular, HTML/CSS, JavaScript</dd>
+            <dt>Back-End</dt>
+            <dd>Java (Spring Boot), PHP (Symfony), Python, C, C++</dd>
+            <dt>Data &amp; ML</dt>
+            <dd>TensorFlow, MongoDB, SQL, Grafana, CI/CD (GitHub Actions)</dd>
+            <dt>Outils</dt>
+            <dd>Adobe XD, Notion, Linear, Jira, Git, Klaviyo, Skello</dd>
+            <dt>Soft skills</dt>
+            <dd>Leadership, créativité, autonomie, apprentissage rapide</dd>
+          </dl>
+        </section>
+
+        <section>
+          <h2>Langues &amp; centres d'intérêt</h2>
+          <p><strong>Langues :</strong> Français (natif) | Anglais (professionnel)</p>
+          <p><strong>Intérêts :</strong> Homelab personnel (projets code &amp; IA) | Musculation &amp; performance physique | Pêche | Lecture</p>
+        </section>
+      </aside>
+    </div>
+  </body>
+</html>
