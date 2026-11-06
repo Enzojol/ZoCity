@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gymzo — Enzo Jolivet</title>
+    <meta
+      name="description"
+      content="Gymzo : un carnet de musculation mis en scène comme un HUD de jeu, avec une carte thermique du corps et un feed privé entre amis. React Native et FastAPI."
+    />
+    <link rel="canonical" href="https://enzojolivet.com/gymzo/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://enzojolivet.com/gymzo/" />
+    <meta property="og:title" content="Gymzo — Enzo Jolivet" />
+    <meta
+      property="og:description"
+      content="Un carnet de musculation mis en scène comme un HUD de jeu, avec un feed privé entre amis."
+    />
+    <meta property="og:image" content="https://enzojolivet.com/gymzo/cover.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Unbounded:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --ground: #0b0a08;
+        --panel: #15130f;
+        --line: #2e2a23;
+        --ink: #efe9dc;
+        --muted: #a9a294;
+        --accent: #ff5a1f;
+        --accent-ink: #0b0a08;
+        --second: #ff2e7e;
+        --band: 88px;
+        --gutter: 48px;
+        --display: "Unbounded", "Arial Black", sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--ground);
+        color: var(--ink);
+        font: 400 15px/1.75 var(--mono);
+      }
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      a {
+        color: inherit;
+      }
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+      .band {
+        position: fixed;
+        inset: 0 0 0 auto;
+        z-index: 1;
+        display: flex;
+        width: var(--band);
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 28px;
+        background: var(--accent);
+        color: var(--accent-ink);
+        font: 900 56px/1 var(--display);
+        writing-mode: vertical-rl;
+        text-decoration: none;
+      }
+      .page {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 40px calc(var(--band) + var(--gutter)) 72px var(--gutter);
+      }
+      .back {
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      .back:hover {
+        color: var(--ink);
+      }
+      h1,
+      h2 {
+        margin: 0;
+        font-family: var(--display);
+        font-weight: 900;
+        line-height: 1.04;
+        overflow-wrap: anywhere;
+        text-transform: uppercase;
+      }
+      h1 {
+        max-width: 15ch;
+        margin-top: 48px;
+        font-size: clamp(36px, 7vw, 80px);
+      }
+      h2 {
+        font-size: clamp(24px, 4vw, 40px);
+      }
+      .lead {
+        max-width: 62ch;
+        margin: 28px 0 0;
+        font-size: 16px;
+      }
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 28px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+      .facts li {
+        border: 1px solid var(--line);
+        padding: 4px 10px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .screens {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin: 0;
+      }
+      .screens figure {
+        margin: 0;
+      }
+      .screens img {
+        border: 1px solid var(--line);
+      }
+      figcaption {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .hero-screens {
+        max-width: 720px;
+        margin-top: 56px;
+      }
+      section {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        gap: 48px;
+        align-items: start;
+        margin-top: 88px;
+        padding-top: 20px;
+        border-top: 2px solid var(--accent);
+      }
+      section.text-only {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      section.text-only > div {
+        max-width: 68ch;
+      }
+      .index {
+        display: block;
+        margin-bottom: 12px;
+        color: var(--accent);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+      }
+      section p {
+        margin: 20px 0 0;
+      }
+      section ul {
+        margin: 20px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+      section li {
+        padding: 10px 0;
+        border-top: 1px solid var(--line);
+      }
+      section li strong {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      footer {
+        margin-top: 88px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+      }
+      footer p {
+        margin: 0 0 8px;
+      }
+      @media (max-width: 760px) {
+        :root {
+          --band: 48px;
+          --gutter: 16px;
+        }
+        .band {
+          padding-top: 16px;
+          font-size: 30px;
+        }
+        .page {
+          padding-top: 24px;
+        }
+        section {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 28px;
+          margin-top: 64px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="band" href="/" aria-label="Retour au portfolio d'Enzo Jolivet">GYMZO</a>
+    <div class="page">
+      <a class="back" href="/">← Portfolio</a>
+      <main>
+        <h1>La muscu comme un HUD de jeu</h1>
+        <p class="lead">
+          Gymzo est un carnet d'entraînement où chaque série alimente un modèle de charge par muscle.
+          Un corps scanné s'allume au fil de la semaine, et ton groupe de potes devient ton groupe
+          d'entraînement.
+        </p>
+        <ul class="facts">
+          <li>Android</li>
+          <li>React Native</li>
+          <li>FastAPI</li>
+          <li>PostgreSQL</li>
+          <li>Projet personnel</li>
+          <li>En test privé</li>
+        </ul>
+
+        <div class="screens hero-screens">
+          <figure>
+            <img src="home.jpg" width="720" height="1558" alt="Accueil de Gymzo : le corps scanné avec les muscles travaillés allumés, le nombre de séances et le menu principal" />
+            <figcaption>L'accueil</figcaption>
+          </figure>
+          <figure>
+            <img src="stats.jpg" width="720" height="1558" alt="Écran Stats : le corps de face avec une carte thermique des muscles et le dock de navigation" />
+            <figcaption>La carte du corps</figcaption>
+          </figure>
+        </div>
+
+        <section class="text-only">
+          <div>
+            <span class="index">01 / L'IDÉE</span>
+            <h2>Donner envie de remplir le carnet</h2>
+            <p>
+              Un carnet de muscu ressemble vite à un tableur. J'ai voulu qu'enregistrer une série
+              ait un effet visible : l'objectif de la semaine, c'est d'allumer tout le corps.
+            </p>
+            <p>
+              Le calcul compare le volume récent de chaque muscle à sa propre habitude. Les niveaux
+              ne classent donc pas tes muscles entre eux : ils disent ce qui reste à faire.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <div>
+            <span class="index">02 / LA SÉANCE</span>
+            <h2>Rapide entre deux séries</h2>
+            <ul>
+              <li>Poids et répétitions enregistrés sans bouton de sauvegarde.</li>
+              <li>Minuteur de repos et historique de l'exercice à portée de main.</li>
+              <li>Bibliothèque de 1 324 exercices, avec recherche et filtres par muscle.</li>
+              <li>Mode invité complet hors ligne, migré vers le compte à l'inscription, sans doublon.</li>
+            </ul>
+          </div>
+          <div class="screens">
+            <figure>
+              <img loading="lazy" src="active.jpg" width="720" height="1558" alt="Séance en cours : volume de la séance, séries validées et exercice affiché" />
+              <figcaption>Une séance en cours</figcaption>
+            </figure>
+            <figure>
+              <img loading="lazy" src="exercise.jpg" width="720" height="1558" alt="Fiche d'exercice : visuel du développé couché, muscles travaillés et instructions" />
+              <figcaption>La fiche d'exercice</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section>
+          <div>
+            <span class="index">03 / LE FEED</span>
+            <h2>Un cercle privé, pas un réseau social</h2>
+            <ul>
+              <li><strong>Entre amis.</strong> Ajout par pseudo, et la demande doit être acceptée.</li>
+              <li><strong>Un résumé.</strong> Durée, volume, records et paliers, jamais le détail des séries.</li>
+              <li><strong>Un seul geste.</strong> Le bouton RESPECT remplace les commentaires et le chat.</li>
+              <li><strong>Ton contrôle.</strong> Chaque séance peut être cachée, et on peut signaler ou bloquer.</li>
+            </ul>
+          </div>
+          <div class="screens">
+            <figure>
+              <img loading="lazy" src="feed.jpg" width="720" height="1558" alt="Feed : résumés de séances d'amis avec durée, volume, records et bouton Respect" />
+              <figcaption>Le feed</figcaption>
+            </figure>
+            <figure>
+              <img loading="lazy" src="friends.jpg" width="720" height="1558" alt="Écran Amis : ajout par pseudo, demandes reçues et liste d'amis" />
+              <figcaption>Les amis</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="text-only">
+          <div>
+            <span class="index">04 / LA DIRECTION</span>
+            <h2>SIGNAL</h2>
+            <p>
+              Du design d'affiche avec une énergie de jeu vidéo : de grands aplats, une bande verticale
+              qui porte le titre de l'écran et des lignes de scan en fond. L'animation est réservée aux
+              moments forts, comme le flash d'une série validée.
+            </p>
+          </div>
+        </section>
+
+        <section class="text-only">
+          <div>
+            <span class="index">05 / SOUS LE CAPOT</span>
+            <h2>Une vraie app, de bout en bout</h2>
+            <ul>
+              <li><strong>Mobile.</strong> React Native, Expo, TypeScript, React Query avec cache hors ligne, Zustand.</li>
+              <li><strong>API.</strong> Python, FastAPI, SQLAlchemy, Alembic, PostgreSQL.</li>
+              <li><strong>Sécurité.</strong> Sessions révocables, limites de tentatives, réinitialisation par code, suppression de compte.</li>
+              <li><strong>Infra.</strong> Docker Compose sur mon homelab Proxmox, exposé par un tunnel Cloudflare.</li>
+              <li><strong>Qualité.</strong> Près de 400 tests automatisés, côté API et côté mobile.</li>
+            </ul>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>
+          Le code est privé, je peux y donner accès sur demande :
+          <a href="mailto:enzojol@hotmail.com">enzojol@hotmail.com</a>.
+        </p>
+        <p>Comptes et séances de démonstration. Visuels d'exercices © Gym visual.</p>
+      </footer>
+    </div>
+  </body>
+</html>
