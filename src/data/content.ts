@@ -1,7 +1,4 @@
-/**
- * Contenu éditorial du portfolio (source : CV Enzo Jolivet).
- * Seul IDENTITY apparaît aussi dans la scène 3D, sur l'écran du PC.
- */
+/** Contenu éditorial du portfolio (source : CV Enzo Jolivet). */
 
 export const IDENTITY = {
   name: 'Enzo Jolivet',
@@ -13,7 +10,7 @@ export const IDENTITY = {
 
 export interface Project {
   title: string
-  /** Nature du projet en deux mots, affichée sur les cartes de l'écran du PC. */
+  /** Nature du projet en deux mots. */
   kind: string
   description: string
   tech: string[]
@@ -27,7 +24,6 @@ export interface Project {
   gradient: string
 }
 
-/** L'ordre compte : les trois premiers s'affichent sur l'écran du PC, le premier en grand. */
 export const PROJECTS: Project[] = [
   {
     title: 'Gymzo',
@@ -43,8 +39,8 @@ export const PROJECTS: Project[] = [
     title: 'ZoCity',
     kind: 'Portfolio 3D',
     description:
-      'Ce portfolio : un bureau 3D immersif où chaque objet ouvre une section. React Three Fiber, éclairage narratif, interface Liquid Glass.',
-    tech: ['React', 'Three.js', 'R3F', 'TypeScript', 'Zustand'],
+      'Ce portfolio : une ville miniature en 3D où chaque bâtiment ouvre une section. Modèles Blender générés par script, lumière précalculée, et une version texte pour les navigateurs sans 3D.',
+    tech: ['React', 'Three.js', 'R3F', 'Blender', 'TypeScript', 'Zustand'],
     github: 'https://github.com/Enzojol/ZoCity',
     image: '/zocity/cover.jpg',
     gradient: 'linear-gradient(135deg, #1d2b4f 0%, #6d5ae8 55%, #ff9e6d 100%)',
