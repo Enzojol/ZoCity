@@ -7,7 +7,8 @@
     "dev": "vite --port 3001",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 3001",
-    "bake": "scripts/bake-city.sh"
+    "bake": "scripts/bake-city.sh",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@react-three/drei": "^10.0.0",
@@ -19,13 +20,19 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@gltf-transform/cli": "^4.5.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.180.0",
     "@vitejs/plugin-react": "^4.3.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "globals": "^16.5.0",
     "typescript": "^5",
+    "typescript-eslint": "^8.72.1",
     "vite": "^6.0.0"
   }
 }

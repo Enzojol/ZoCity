@@ -17,10 +17,27 @@ interface PlaceEntry {
   plot: Plot
   /** Haut du bâtiment dans la ville : le marqueur flotte juste au-dessus. */
   height: number
-  /** Vue depuis la rue autour du lieu : azimut depuis +z en radians, distance au sol, hauteur de l'œil, hauteur visée. */
-  view: { azimuth: number; distance: number; eye: number; look: number }
+  /** Vue depuis la rue, calculée par défaut à partir du terrain et de la hauteur. À régler seulement si un voisin la gêne. */
+  view?: Partial<StreetView>
   Model: ComponentType
   Panel: ComponentType
+}
+
+/** Azimut depuis +z en radians, distance au sol, hauteur de l'œil, hauteur visée, en unités de la ville. */
+interface StreetView {
+  azimuth: number
+  distance: number
+  eye: number
+  look: number
+}
+
+/**
+ * Vue de rue par défaut : depuis le côté de la vue d'arrivée, à hauteur de passant, assez loin pour que le bâtiment
+ * tienne dans le cadre en largeur comme en hauteur.
+ */
+function defaultView(plot: Plot, height: number): StreetView {
+  const [hx, hz] = plotHalfSize(plot)
+  return { azimuth: -0.55, distance: Math.max(Math.max(hx, hz) * 2.5, height * 1.1), eye: 0.42, look: 0.25 + height * 0.3 }
 }
 
 const ENTRIES: PlaceEntry[] = [
@@ -40,7 +57,6 @@ const ENTRIES: PlaceEntry[] = [
     building: 'Projet · salle de sport',
     plot: { block: [0, 8], lots: ['sw'] },
     height: 2,
-    view: { azimuth: -0.58, distance: 3.9, eye: 0.42, look: 0.86 },
     Model: Gym,
     Panel: GymPanel,
   },
@@ -90,7 +106,6 @@ const ENTRIES: PlaceEntry[] = [
     building: 'Bureau de poste',
     plot: { block: [8, 8], lots: ['sw'] },
     height: 3.5,
-    view: { azimuth: -0.5, distance: 3.9, eye: 0.42, look: 1 },
     Model: Post,
     Panel: ContactPanel,
   },
@@ -106,7 +121,7 @@ export interface Place extends PlaceEntry {
 
 export const PLACE_LIST: Place[] = ENTRIES.map((e, i) => {
   const [x, z] = plotCenter(e.plot)
-  const { azimuth, distance, eye, look } = e.view
+  const { azimuth, distance, eye, look } = { ...defaultView(e.plot, e.height), ...e.view }
   return {
     ...e,
     number: i + 1,

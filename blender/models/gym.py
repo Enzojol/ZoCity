@@ -3,7 +3,7 @@ from lib import area_light, bake_export, blob, box, cyl, mat, prism_x
 
 
 def build(out, atlas):
-    # Palette: dusk painted model, Gymzo orange and pink as the only loud colours
+    # Palette de maquette peinte au crépuscule : l'orange et le rose de Gymzo sont les seules couleurs vives
     wall = mat("wall", "#5b5068", 0.8)
     wall_light = mat("wall_light", "#7c6d90", 0.75)
     trim = mat("trim", "#26222f", 0.6)
@@ -30,7 +30,7 @@ def build(out, atlas):
     LEFT = -W / 2  # -x : l'autre côté vitré
     BY = 0.25  # le bâtiment est un peu en retrait sur son parvis
 
-    # --- Forecourt and block ---------------------------------------------------
+    # --- Parvis ------------------------------------------------------------------
     box("forecourt", (5.4, 0.95, 0.03), (0, -2.3, 0.015), paving_dark, 0.0)
 
     for s, x in ((-1, -2.45), (1, 2.45)):
@@ -38,20 +38,20 @@ def build(out, atlas):
         for k, (dx, dy, r, m) in enumerate(((0, 0, 0.21, leaf), (0.08, 0.07, 0.14, leaf2), (-0.08, -0.05, 0.13, leaf2))):
             blob(f"shrub_{s}_{k}", r, (x + dx, -2.42 + dy, 0.32 + k * 0.05), m)
 
-    # --- Building shell --------------------------------------------------------
+    # --- Enveloppe ---------------------------------------------------------------
     Z0 = 0.03
     box("floor", (W, D, 0.05), (0, BY, Z0 + 0.025), floor_rubber, 0)
-    # Mats under each station, breaks up the floor seen from above
+    # Tapis sous chaque poste : casse le sol vu d'en haut
     for i, x in enumerate((-1.9, -0.95, 0, 0.95, 1.9)):
         box(f"mat_{i}", (0.74, 0.92, 0.008), (x, BY + 1.0, Z0 + 0.054), mat("mat_rubber", "#2c2733", 0.7), 0)
-    # Back wall with its mirror and an orange accent band
+    # Mur du fond, avec son miroir et une bande orange
     box("back_wall", (W, 0.14, H), (0, BY + D / 2 - 0.07, Z0 + H / 2), wall, 0.01)
     box("mirror", (W - 0.5, 0.012, 0.92), (0, BY + D / 2 - 0.146, Z0 + 0.72), mirror, 0)
     box("accent", (W - 0.14, 0.012, 0.2), (0, BY + D / 2 - 0.146, Z0 + 1.42), wall_glow, 0)
     box("right_wall", (0.14, D, H), (W / 2 - 0.07, BY, Z0 + H / 2), wall, 0.01)
     box("right_accent", (0.012, D - 0.2, 0.74), (W / 2 - 0.146, BY, Z0 + 0.42), accent_wall, 0)
 
-    # Fascia carrying the sign, slightly proud of the glass
+    # Bandeau qui porte l'enseigne, un peu en saillie sur le vitrage
     FY = BY + FRONT
     box("fascia_front", (W + 0.14, 0.2, 0.52), (0, FY + 0.02, Z0 + H + 0.26), wall_light, 0.02)
     box("fascia_left", (0.2, D, 0.52), (LEFT - 0.02, BY, Z0 + H + 0.26), wall_light, 0.02)
@@ -59,11 +59,11 @@ def build(out, atlas):
     box("fascia_back", (W, 0.2, 0.52), (0, BY + D / 2, Z0 + H + 0.26), wall, 0.02)
     box("ceiling", (W, D, 0.04), (0, BY, Z0 + H + 0.02), roof_dark, 0)
 
-    # Ceiling strip lights, these light the interior in the bake
+    # Réglettes au plafond : elles éclairent l'intérieur pendant la cuisson
     for y in (-1.2, -0.2, 0.8, 1.6):
         box(f"strip_{y}", (W - 0.5, 0.06, 0.012), (0, BY + y, Z0 + H - 0.01), ceiling_light, 0)
 
-    # Mullions, a transom and a door frame on both glazed sides
+    # Meneaux, traverse et encadrement de porte sur les deux côtés vitrés
     for i in range(7):
         x = LEFT + (W / 6) * i
         box(f"mull_f{i}", (0.036, 0.05, H), (x, FY, Z0 + H / 2), trim, 0.006)
@@ -75,7 +75,7 @@ def build(out, atlas):
     box("sill_f", (W, 0.07, 0.05), (0, FY, Z0 + 0.025), trim, 0.006)
     box("sill_l", (0.07, D, 0.05), (LEFT, BY, Z0 + 0.025), trim, 0.006)
 
-    # Entrance canopy
+    # Auvent d'entrée
     box("canopy", (1.5, 0.62, 0.05), (-0.87, FY - 0.3, Z0 + 1.28), trim, 0.012)
     box("canopy_a", (0.03, 0.03, 1.28), (-1.56, FY - 0.57, Z0 + 0.64), trim, 0.004)
     box("canopy_b", (0.03, 0.03, 1.28), (-0.18, FY - 0.57, Z0 + 0.64), trim, 0.004)
@@ -86,7 +86,7 @@ def build(out, atlas):
         box(f"door_{side}_foot", (0.42, 0.03, 0.05), (dx, FY - 0.03, Z0 + 0.05), trim, 0.004)
         box(f"door_{side}_pull", (0.016, 0.03, 0.42), (dx + (0.14 if side == "l" else -0.14), FY - 0.05, Z0 + 0.6), steel, 0.004)
 
-    # --- Equipment -------------------------------------------------------------
+    # --- Équipement --------------------------------------------------------------
 
 
     def rack(x, y, zero):
@@ -123,29 +123,29 @@ def build(out, atlas):
         bench_unit(x, BY + 0.05, zero)
     for x in (-1.9, -1.35, -0.8, 0.8, 1.35, 1.9):
         treadmill(x, BY - 1.15, zero)
-    # Dumbbell rack along the right wall
+    # Rack d'haltères le long du mur de droite
     box("db_rack", (0.28, 1.7, 0.42), (W / 2 - 0.3, BY + 0.1, zero + 0.21), kit, 0.008)
     for i in range(9):
         for j, z in enumerate((0.3, 0.43)):
             c = plate_orange if (i + j) % 2 else plate_pink
             cyl(f"db_{i}_{j}", 0.05, 0.18, (W / 2 - 0.3, BY - 0.62 + i * 0.18, zero + z), c, "x", 14)
 
-    # --- Roof ------------------------------------------------------------------
+    # --- Toit --------------------------------------------------------------------
     RT = Z0 + H + 0.52
     box("roof_deck", (W + 0.14, D + 0.14, 0.05), (0, BY, RT - 0.01), roof_dark, 0.01)
-    # Sawtooth, glazed vertical faces glow and catch the eye from above
+    # Sheds : leurs faces vitrées verticales brillent et attirent l'œil vu d'en haut
     teeth = 4
     tw = D / teeth
     for i in range(teeth):
         y0 = BY + FRONT + i * tw
         prism_x(f"tooth_{i}", [(y0 + 0.02, RT), (y0 + tw - 0.02, RT), (y0 + tw - 0.02, RT + 0.32)], LEFT + 0.14, W / 2 - 0.14, roof, 0.008)
         box(f"north_{i}", (W - 0.5, 0.012, 0.24), (0, y0 + tw - 0.012, RT + 0.14), ceiling_light, 0)
-    # Roof plant
+    # Équipements techniques
     box("hvac_a", (0.5, 0.34, 0.24), (1.75, BY - 1.3, RT + 0.47), mat("hvac", "#c9c4d6", 0.6), 0.02)
     box("hvac_b", (0.36, 0.34, 0.2), (1.18, BY - 1.3, RT + 0.45), mat("hvac", "#c9c4d6", 0.6), 0.02)
     cyl("vent", 0.09, 0.3, (-1.9, BY - 1.3, RT + 0.48), steel, "z", 18)
 
-    # Dumbbell on its plinths, the building's signature
+    # L'haltère sur ses socles, la signature du bâtiment
     DZ = RT + 1.05
     for x in (-0.82, 0.82):
         box(f"mount_{x}", (0.18, 0.34, 0.74), (x, BY, RT + 0.4), trim, 0.03)

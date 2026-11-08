@@ -3,12 +3,12 @@ import * as THREE from 'three'
 
 export const U = {
   time: { value: 0 },
-  /** Locks the sky to the camera in poster mode, so sun and horizon stay composed behind the model. */
+  /** Fixe le ciel à la caméra en mode affiche : soleil et horizon restent composés derrière la maquette. */
   skyRot: { value: new THREE.Matrix3() },
   sun: { value: new THREE.Vector3(0.53, 0.06, -0.85).normalize() },
 }
 
-/** Direction the sunlight comes from. Deliberately not the visible sun: facing faces stay lit. */
+/** D'où vient la lumière du soleil. Volontairement pas le soleil visible : les façades vues restent éclairées. */
 export const SUN_LIGHT = new THREE.Vector3(-0.66, 0.52, 0.54).normalize()
 
 const NOISE = /* glsl */ `
@@ -42,17 +42,17 @@ const SKY = /* glsl */ `
     c+=C(1.,.55,.32)*pow(s,7.)*.5;
     c+=C(1.,.78,.5)*pow(s,48.)*.75;
 
-    // Cirrus streaks catching the last light
+    // Cirrus qui accrochent la dernière lumière
     vec2 uv=d.xz/(y+.13);
     float st=fbm(uv*vec2(.55,1.9)+vec2(uTime*.004,0.));
     c=mix(c,C(1.,.64,.62),smoothstep(.5,.78,st)*smoothstep(.05,.18,y)*(1.-smoothstep(.4,.75,y))*.6);
 
-    // Stars
+    // Étoiles
     vec2 sg=d.xz/(abs(d.y)+.25)*190.;
     vec2 sp=floor(sg);
     c+=vec3(1.,.95,.9)*step(.9975,h21(sp))*smoothstep(.34,.72,y)*.9*smoothstep(.34,.1,length(fract(sg)-.5));
 
-    // Cumulus bank on the horizon
+    // Banc de cumulus sur l'horizon
     float az=atan(d.x,-d.z);
     float top=.035+.125*pow(fbm(vec2(az*2.1,3.7)),1.6)*2.;
     float n=(fbm(vec2(az*11.,y*42.))-.5)*.05;
@@ -61,7 +61,7 @@ const SKY = /* glsl */ `
     vec3 cc=mix(C(.52,.30,.60),C(1.,.68,.60),smoothstep(.15,.95,k+n*5.));
     cc+=C(1.,.55,.3)*pow(s,5.)*.55;
     c=mix(c,cc,m*.94);
-    // Sun disc in front of the bank, it is the focal point of the sky
+    // Disque du soleil devant le banc : c'est le point focal du ciel
     c=mix(c,vec3(6.,3.9,1.9),smoothstep(.99925,.9996,s));
     return c;
   }
@@ -125,7 +125,7 @@ export const seaMaterial = new THREE.ShaderMaterial({
       float h0 = waves(p);
       vec3 N = normalize(vec3((h0-waves(p+vec2(e,0.)))/e*.05, 1., (h0-waves(p+vec2(0.,e)))/e*.05));
       vec3 R = reflect(V, N); R.y = abs(R.y);
-      // Flattened reflection: a model seen from above would otherwise only mirror the dark zenith
+      // Reflet aplati : vue d'en haut, la mer ne refléterait sinon que le zénith sombre
       vec3 Rf = normalize(vec3(R.x, R.y*.32, R.z));
       float depth = smoothstep(0., -13., sd);
       vec3 body = mix(C(.36,.86,.80), C(.13,.34,.62), depth);
@@ -143,7 +143,7 @@ export const seaMaterial = new THREE.ShaderMaterial({
   `,
 })
 
-/** The water block seen in cross-section on the plinth edge. */
+/** L'eau vue en coupe sur la tranche du socle. */
 export const waterWallMaterial = new THREE.ShaderMaterial({
   uniforms: { uTime: U.time },
   vertexShader: /* glsl */ `
@@ -177,11 +177,10 @@ export const waterWallMaterial = new THREE.ShaderMaterial({
  * Seule l'ombre portée en direct s'y ajoute, pour qu'un immeuble assombrisse son voisin.
  * Elle ne touche que les faces tournées vers le soleil : les autres sont déjà sombres dans la cuisson.
  */
-export function makeBaked(map: THREE.Texture | null, tinted = false) {
+export function makeBaked(map: THREE.Texture | null) {
   const material = new THREE.ShaderMaterial({
     lights: true,
     uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.lights, { uMap: { value: null }, uSunDir: { value: SUN_LIGHT.clone() } }]),
-    defines: tinted ? { USE_TINT: '' } : {},
     vertexShader: /* glsl */ `
       #include <common>
       #include <shadowmap_pars_vertex>
@@ -233,7 +232,7 @@ export function makeBaked(map: THREE.Texture | null, tinted = false) {
   return material
 }
 
-/** Ground: asphalt, lane dashes, crossings and lamp pools, all from world position. */
+/** Sol : asphalte, pointillés, passages piétons et halos des lampadaires, tout depuis la position dans le monde. */
 export function makeGround() {
   const mat = new THREE.MeshStandardMaterial({ color: '#3c3858', roughness: 0.42, metalness: 0.1 })
   mat.onBeforeCompile = (s) => {
@@ -262,18 +261,18 @@ export function makeGround() {
           bool hr = az < .75, vr = ax < .75;
           bool cross = hr && vr;
           float aa = fwidth(vWP.x) + fwidth(vWP.z);
-          // Centre dashes, dropped inside junctions
+          // Pointillés centraux, interrompus dans les carrefours
           float along = step(.5, fract(vWP.x * 1.1));
           float alongV = step(.5, fract(vWP.z * 1.1));
           float d = 0.;
           if (hr && !vr && ax > 1.3) d = smoothstep(.022 + aa, .022, az) * along;
           if (vr && !hr && az > 1.3) d = smoothstep(.022 + aa, .022, ax) * alongV;
           diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.95, .78, .4), d * .85);
-          // Zebra crossings
+          // Passages piétons
           float zh = (hr && ax > .78 && ax < 1.15) ? smoothstep(.5,.45,abs(fract(vWP.z*5.)-.5)) : 0.;
           float zv = (vr && az > .78 && az < 1.15) ? smoothstep(.5,.45,abs(fract(vWP.x*5.)-.5)) : 0.;
           diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.8,.78,.86), max(zh,zv) * .8);
-          // Lamp pools on the wet road
+          // Halos des lampadaires sur la route mouillée
           vec2 q1 = vec2(mod(vWP.x + 4., 8.) - 4., Z);
           vec2 q2 = vec2(X, mod(vWP.z + 4., 8.) - 4.);
           float pool = (hr ? exp(-dot(q1,q1) * 2.2) : 0.) + (vr ? exp(-dot(q2,q2) * 2.2) : 0.);

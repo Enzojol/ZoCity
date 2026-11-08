@@ -35,6 +35,7 @@ plonge au niveau de la rue.
 npm install
 npm run dev     # http://localhost:3001
 npm run build   # vérification des types et build de production
+npm run lint    # ESLint
 npm run bake    # reconstruit les modèles (Blender requis), ou : npm run bake -- gym tower
 ```
 
@@ -51,8 +52,10 @@ src/
   city/
     places.ts       # le registre des lieux
     layout.ts       # blocs, lots, terrain, immeubles de fond, mobilier urbain
-    buildings.tsx   # modèles cuits et éléments vivants : enseignes, néons, animations
-    Scene.tsx       # socle, circulation, caméra, préparation avant la descente
+    buildings.tsx   # éléments vivants des bâtiments : enseignes, néons, animations
+    models.ts       # chargement des modèles cuits
+    Scene.tsx       # toile 3D, lumière, effets d'écran
+    scene/          # socle et paysage, rues et circulation, lieux et marqueurs, caméra, préparation
     shaders.ts      # ciel, mer, sol, matériau des modèles cuits
   ui/               # titre, légende, panneaux, écran de chargement
   static/page.ts    # version texte, écrite dans le HTML au build
@@ -62,7 +65,8 @@ src/
 ### Ajouter un lieu
 
 Une entrée dans `src/city/places.ts` suffit : elle réserve des lots sur la grille, et les immeubles de fond, le
-marqueur, la légende, la caméra et le panneau suivent. Un projet occupe un lot comme n'importe quel immeuble : c'est
+marqueur, la légende, la caméra et le panneau suivent. La vue de rue est calculée à partir du terrain et de la
+hauteur ; on ne la règle à la main que si un voisin gêne le cadre. Un projet occupe un lot comme n'importe quel immeuble : c'est
 son style et son marqueur qui le distinguent, pas sa taille. Tous les modèles partagent la même échelle.
 
 ### Décisions notables
