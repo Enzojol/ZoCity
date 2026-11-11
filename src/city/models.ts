@@ -15,7 +15,8 @@ export function useBaked(url: string) {
   return useMemo(() => {
     scene.traverse((o) => {
       const mesh = o as THREE.Mesh
-      if (!mesh.isMesh) return
+      // Le modèle est partagé et ce calcul peut repasser : un maillage déjà converti garde son matériau
+      if (!mesh.isMesh || (mesh.material as THREE.ShaderMaterial).isShaderMaterial) return
       const map = (mesh.material as THREE.MeshStandardMaterial).map
       if (map) {
         map.colorSpace = THREE.SRGBColorSpace
