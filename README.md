@@ -4,7 +4,7 @@
 
 Mon portfolio est une ville miniature au crépuscule, posée sur un socle au-dessus d'une mer de nuages.
 La caméra descend du ciel, puis chaque bâtiment ouvre une section : un marqueur numéroté dessus, un clic, et on
-plonge au niveau de la rue.
+plonge au niveau de la rue. La ville se laisse tourner, approcher, et une fois dans la rue on peut regarder autour de soi.
 
 ![La ville à l'arrivée](docs/screenshots/city-arrival.png)
 
@@ -78,6 +78,9 @@ son style et son marqueur qui le distinguent, pas sa taille. Tous les modèles p
 - **Préparation derrière l'écran de chargement.** Modèles, polices, shaders, textures et premières images sont traités
   avant la descente, qui ne démarre qu'une fois les images fluides. Une machine lente passe en résolution inférieure à
   ce moment-là, là où le changement ne se voit pas.
+- **Cadrage par décalage de l'objectif.** Quand un panneau s'ouvre, la caméra reste à l'endroit prévu pour le lieu :
+  c'est la projection qui se décale pour placer le bâtiment dans la partie libre de l'écran, à côté du panneau sur
+  ordinateur, au-dessus sur téléphone. Le mobilier urbain dégagé le long de chaque ligne de vue le reste donc toujours.
 - **Une ville qui vit, sans simulateur.** Les véhicules suivent le réseau des rues déduit de la grille et du rivage,
   s'attendent aux carrefours et laissent passer les piétons. Les passants ne marchent que là où l'emprise réelle des
   bâtiments, lue dans la scène au chargement, laisse la place : un bâtiment qui change ne se fait jamais traverser.
