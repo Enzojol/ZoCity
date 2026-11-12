@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { junctionQuarters, junctionWait, LANE, LANES_FROM, legCars, legOf, legWalkers, ROADS, type Lane } from './network'
 import { vehicleKinds, type VehicleKind } from './vehicles'
-import { clearance, streetCamera } from './focus'
+import { clearanceBox, streetCamera } from './focus'
 
 const ON_LANE = 0
 const TURNING = 1
@@ -98,10 +98,21 @@ function createTraffic(isMobile: boolean) {
     }
   })
 
+  /** Une voie qui passe près de la caméra de rue : on l'évite tant que le lieu est ouvert, pour ne pas boucher le premier plan. */
+  function nearCamera(k: number) {
+    const cam = streetCamera()
+    if (!cam) return false
+    const l = lanes[k]
+    const t = THREE.MathUtils.clamp((cam.x - l.x0) * l.dx + (cam.z - l.z0) * l.dz, 0, l.length + 0.6)
+    return Math.hypot(l.x0 + l.dx * t - cam.x, l.z0 + l.dz * t - cam.z) < 2.2
+  }
+
   function chooseNext(i: number) {
     const l = lanes[lane[i]]
-    const options = LANES_FROM[l.to].filter((k) => k !== l.reverse && (roster[i].turnsAround || nodes[lanes[k].to].junction))
-    const pool = options.length ? options : LANES_FROM[l.to].filter((k) => k !== l.reverse)
+    const all = LANES_FROM[l.to].filter((k) => k !== l.reverse)
+    const allowed = all.filter((k) => roster[i].turnsAround || nodes[lanes[k].to].junction)
+    const clear = allowed.filter((k) => !nearCamera(k))
+    const pool = clear.length ? clear : allowed.length ? allowed : all
     // Tout droit plus souvent que les virages
     let total = 0
     for (const k of pool) total += lanes[k].dx * l.dx + lanes[k].dz * l.dz > 0.5 ? 2 : 1
@@ -265,9 +276,10 @@ function createTraffic(isMobile: boolean) {
           if (back) release(i)
         }
       }
+      const norm = Math.hypot(hx, hz) || 1
       dummy.position.set(x, 0, z)
       dummy.rotation.set(0, Math.atan2(-hz, hx), 0)
-      dummy.scale.setScalar(clearance(cam, x, z, 0.55, 0.95))
+      dummy.scale.setScalar(clearanceBox(cam, x, z, hx / norm, hz / norm, half[i], 0.11))
       dummy.updateMatrix()
       const { body, lights } = meshes.get(roster[i])!
       body.setMatrixAt(slot[i], dummy.matrix)
