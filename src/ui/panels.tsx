@@ -1,12 +1,15 @@
 // Contenu des panneaux, tiré des vraies données du site.
-import { useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { CONTACT, INTERESTS, PROJECTS, SKILLS, SOCIALS, TIMELINE, type Project } from '@/data/content'
+import { MODEL_URLS } from '@/city/models'
+import { useRenderStats } from '@/city/renderStats'
 import { resultLines } from './results'
 
-function ProjectBody({ project }: { project: Project }) {
+function ProjectBody({ project, children }: { project: Project; children?: ReactNode }) {
   return (
     <>
       <p className="lead">{project.description}</p>
+      {children}
       {project.image && <img className="cover" src={project.image} alt="" />}
       <ul className="tags">
         {project.tech.map((t) => (
@@ -33,8 +36,51 @@ export function GymPanel() {
   return <ProjectBody project={PROJECTS[0]} />
 }
 
+const nf = new Intl.NumberFormat('fr-FR')
+
+/** Les vrais chiffres de la scène affichée, relevés par la sonde de la toile 3D tant que ce panneau est ouvert. */
+function UnderTheHood() {
+  const stats = useRenderStats((s) => s.stats)
+  useEffect(() => useRenderStats.getState().watch(), [])
+  const live = (value: (s: NonNullable<typeof stats>) => string) => (stats ? value(stats) : '—')
+  return (
+    <section className="hood" aria-labelledby="hood-title">
+      <h3 id="hood-title">
+        <span className="hood-dot" aria-hidden="true" />
+        Sous le capot, en direct
+      </h3>
+      <dl>
+        <div>
+          <dt>Images par seconde</dt>
+          <dd>{live((s) => nf.format(Math.round(s.fps)))}</dd>
+        </div>
+        <div>
+          <dt>Triangles affichés</dt>
+          <dd>{live((s) => nf.format(s.triangles))}</dd>
+        </div>
+        <div>
+          <dt>Appels de dessin</dt>
+          <dd>{live((s) => nf.format(s.calls))}</dd>
+        </div>
+        <div>
+          <dt>Résolution du rendu</dt>
+          <dd>{live((s) => `${nf.format(s.width)} × ${nf.format(s.height)} px`)}</dd>
+        </div>
+        <div>
+          <dt>Modèles 3D</dt>
+          <dd>{MODEL_URLS.length}, cuits dans Blender</dd>
+        </div>
+      </dl>
+    </section>
+  )
+}
+
 export function ZoCityPanel() {
-  return <ProjectBody project={PROJECTS[1]} />
+  return (
+    <ProjectBody project={PROJECTS[1]}>
+      <UnderTheHood />
+    </ProjectBody>
+  )
 }
 
 export function ExperiencePanel() {

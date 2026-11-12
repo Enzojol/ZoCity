@@ -13,6 +13,7 @@ import { CENTER, FOV_FAR, useVille } from './store'
 import { CameraRig } from './scene/CameraRig'
 import { CloudLayer, Plinth, Waterfront } from './scene/Landscape'
 import { Marker, PlaceSlot } from './scene/PlaceSlot'
+import { RenderProbe } from './scene/RenderProbe'
 import { Streets } from './scene/Streets'
 import { Warmup } from './scene/Warmup'
 
@@ -106,6 +107,7 @@ export function Scene({ isMobile, skip }: { isMobile: boolean; skip: boolean }) 
         <Marker key={p.id} place={p} />
       ))}
       <CameraRig isMobile={isMobile} />
+      <RenderProbe />
       {/* La lumière est peinte dans les modèles : les effets d'écran se limitent au halo des néons et à l'étalonnage */}
       <EffectComposer multisampling={isMobile ? 0 : 4}>
         <Bloom mipmapBlur resolutionScale={0.5} intensity={isMobile ? 0.5 : 0.42} luminanceThreshold={1.2} luminanceSmoothing={0.3} radius={0.65} />
