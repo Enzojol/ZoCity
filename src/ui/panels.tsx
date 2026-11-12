@@ -1,6 +1,7 @@
 // Contenu des panneaux, tiré des vraies données du site.
 import { useState } from 'react'
 import { CONTACT, INTERESTS, PROJECTS, SKILLS, SOCIALS, TIMELINE, type Project } from '@/data/content'
+import { resultLines } from './results'
 
 function ProjectBody({ project }: { project: Project }) {
   return (
@@ -44,7 +45,13 @@ export function ExperiencePanel() {
           <span className="period">{e.period}</span>
           <h3>{e.title}</h3>
           <span className="where">{e.place}</span>
-          <p>{e.detail}</p>
+          <ul className="results">
+            {resultLines(e.detail, e.highlights).map((line, i) => (
+              <li key={i}>
+                {line.map((s, j) => (s.strong ? <strong key={j}>{s.text}</strong> : s.text))}
+              </li>
+            ))}
+          </ul>
         </li>
       ))}
     </ol>

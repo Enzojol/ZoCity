@@ -1,20 +1,29 @@
 // La version texte du site : écrite dans le HTML au build, à partir des mêmes données que la ville.
 // C'est ce que voient les moteurs de recherche, les lecteurs d'écran, et les navigateurs sans WebGL ni JavaScript.
 import { CONTACT, IDENTITY, INTERESTS, PROJECTS, SKILLS, SOCIALS, TIMELINE } from '../data/content'
+import { resultLines } from '../ui/results'
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
-const entry = (e: (typeof TIMELINE)[number]) => `
+/** Un poste : une ligne par phrase, chiffres clés en gras, comme dans la ville. La formation garde son paragraphe. */
+const entry = (e: (typeof TIMELINE)[number], lines = false) => {
+  const detail = lines
+    ? `<ul class="s-lines">${resultLines(e.detail, e.highlights)
+        .map((line) => `<li>${line.map((s) => (s.strong ? `<strong>${esc(s.text)}</strong>` : esc(s.text))).join('')}</li>`)
+        .join('')}</ul>`
+    : `<p>${esc(e.detail)}</p>`
+  return `
       <article>
         <p class="s-meta">${esc(e.period)}</p>
         <h3>${esc(e.title)}</h3>
         <p class="s-meta">${esc(e.place)}</p>
-        <p>${esc(e.detail)}</p>
+        ${detail}
       </article>`
+}
 
 export function staticPage() {
-  const jobs = TIMELINE.slice(0, 3).map(entry).join('')
-  const school = TIMELINE.slice(3).map(entry).join('')
+  const jobs = TIMELINE.slice(0, 3).map((e) => entry(e, true)).join('')
+  const school = TIMELINE.slice(3).map((e) => entry(e)).join('')
   const projects = PROJECTS.map((p) => {
     const links = [p.caseStudy && `<a href="${esc(p.caseStudy)}">Voir le projet</a>`, p.github && `<a href="${esc(p.github)}">GitHub</a>`].filter(Boolean).join(' · ')
     return `
@@ -63,6 +72,10 @@ export const STATIC_CSS = `
   #static .s-role{font-size:18px}
   #static .s-meta{color:#ffc9c2;font-size:14px}
   #static .s-city{margin-top:48px}
+  #static ul.s-lines{list-style:none;margin:8px 0 0;padding:0}
+  #static .s-lines li{margin:9px 0 0;padding-left:12px;border-left:2px solid #34376f}
+  #static .s-lines li:first-child{margin-top:0}
+  #static strong{font-weight:600;color:#ffe14d}
   html.city body{background:linear-gradient(#2a2360,#8c4a86 58%,#ff9d7e)}
   html.city #static{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
   @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}

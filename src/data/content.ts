@@ -71,6 +71,8 @@ export interface TimelineEntry {
   title: string
   place: string
   detail: string
+  /** Passages de detail à faire ressortir, recopiés tels quels : l'affichage les retrouve dans le texte. */
+  highlights?: string[]
 }
 
 export const TIMELINE: TimelineEntry[] = [
@@ -80,6 +82,7 @@ export const TIMELINE: TimelineEntry[] = [
     place: 'Lunettes Pour Tous — Paris',
     detail:
       'Roadmap de l’app de gestion de stock RFID (React) du cadrage au déploiement en 31 magasins — précision inventaire 98 %. Implémentation ML (Autone) : disponibilité produit de 70 % à 95 %. Scripts Python d’automatisation multi-équipes, support IT (~80 tickets/semaine) et supervision du centre logistique (16 personnes, +25 % de productivité).',
+    highlights: ['31 magasins', '98 %', '70 % à 95 %', '~80 tickets/semaine', '16 personnes, +25 % de productivité'],
   },
   {
     period: 'Jan. 2022 — Août 2022',
@@ -87,6 +90,7 @@ export const TIMELINE: TimelineEntry[] = [
     place: 'Orchestra — Paris',
     detail:
       'App interne de data-visualisation (React / Angular), optimisation des workflows support via Jira (Java Spring), monitoring bout-en-bout Grafana : indisponibilités réduites de 30 %.',
+    highlights: ['30 %'],
   },
   {
     period: 'Juil. 2021 — Déc. 2021',
@@ -94,6 +98,7 @@ export const TIMELINE: TimelineEntry[] = [
     place: 'Sikiwis Digitalizr — Paris',
     detail:
       'Plateforme ERP (PHP / Symfony / JS) pour les métaux précieux : architecture modulaire, validation automatique des données (saisie manuelle −40 %), modules sur mesure issus des consultations clients.',
+    highlights: ['−40 %'],
   },
   {
     period: '2019 — 2024',
