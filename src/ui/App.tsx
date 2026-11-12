@@ -1,5 +1,5 @@
 // L'interface posée sur la ville : titre, légende, panneau et écran de chargement.
-import { Component, useEffect, useState, type ReactNode } from 'react'
+import { Component, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useProgress } from '@react-three/drei'
 import { CONTACT, IDENTITY } from '@/data/content'
 import { PLACE_LIST, PLACES } from '@/city/places'
@@ -40,6 +40,25 @@ function Panel() {
     window.addEventListener('keydown', on)
     return () => window.removeEventListener('keydown', on)
   }, [setFocus])
+  // À la fermeture, le clavier revient sur ce qui a ouvert le panneau (légende ou marqueur) au lieu de repartir du début de la page
+  const opener = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    const on = (e: FocusEvent) => {
+      const el = e.target as HTMLElement
+      if (!el.closest('.panel')) opener.current = el
+    }
+    document.addEventListener('focusin', on)
+    return () => document.removeEventListener('focusin', on)
+  }, [])
+  const wasOpen = useRef(false)
+  useEffect(() => {
+    if (focus) wasOpen.current = true
+    else if (wasOpen.current) {
+      wasOpen.current = false
+      const lost = !document.activeElement || document.activeElement === document.body
+      if (lost && opener.current?.isConnected) opener.current.focus({ preventScroll: true })
+    }
+  }, [focus])
   if (!focus) return null
   const place = PLACES[focus]
   const { Panel: Body } = place
