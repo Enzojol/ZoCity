@@ -130,16 +130,19 @@ export default function App() {
             {IDENTITY.role} — {IDENTITY.specialty}
           </p>
         </div>
-        <div className="actions">
-          <a href={CONTACT.cv} target="_blank" rel="noreferrer">
-            CV (PDF)
+        {/* Sur ordinateur chaque élément garde son coin ; sur téléphone ils se rangent ensemble dans un seul bloc en bas */}
+        <div className="dock">
+          <div className="actions">
+            <a href={CONTACT.cv} target="_blank" rel="noreferrer">
+              CV (PDF)
+            </a>
+            <button onClick={() => setFocus('contact')}>Contact</button>
+          </div>
+          <Legend />
+          <a className="plain" href="/?texte">
+            Version texte
           </a>
-          <button onClick={() => setFocus('contact')}>Contact</button>
         </div>
-        <Legend />
-        <a className="plain" href="/?texte">
-          Version texte
-        </a>
       </div>
       <Panel />
       {phase === 'descent' && (
