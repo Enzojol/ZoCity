@@ -35,3 +35,8 @@ export const FOV_CLOSE = 38
 /** Élévation et azimut de la vue d'arrivée. */
 export const REST_ELEVATION = 0.46
 export const REST_AZIMUTH = -0.47
+
+/** Sur un écran en hauteur, la largeur manque et la hauteur abonde : la vue d'arrivée plonge davantage. */
+export function restElevation(aspect: number) {
+  return REST_ELEVATION + Math.max(0, 1 - aspect) * 0.36
+}

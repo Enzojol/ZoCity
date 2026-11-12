@@ -1,11 +1,11 @@
 // La caméra : descente d'ouverture, vue d'arrivée en téléobjectif, plongée au niveau de la rue.
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { CameraControls, CameraControlsImpl } from '@react-three/drei'
 import * as THREE from 'three'
 import { U } from '../shaders'
-import { PLACES } from '../places'
-import { CENTER, FOV_CLOSE, FOV_FAR, REST_AZIMUTH, REST_ELEVATION, useVille } from '../store'
+import { PLACE_LIST, PLACES } from '../places'
+import { CENTER, FOV_CLOSE, FOV_FAR, PLINTH, REST_AZIMUTH, restElevation, useVille } from '../store'
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
@@ -22,25 +22,76 @@ interface Rect {
   h: number
 }
 
-const TARGET = new THREE.Vector3(CENTER[0], 3.5, CENTER[2])
+// ─── Vue d'arrivée ────────────────────────────────────────────────────────────
 
-/** Distance qui cadre le socle selon le format de l'écran, avec l'objectif d'arrivée. */
-function fitDistance(aspect: number) {
-  const span = Math.tan(THREE.MathUtils.degToRad(FOV_FAR / 2)) * 2
-  const tall = 27.5 / span
-  const wide = 34 / (span * aspect)
-  return Math.max(tall, wide)
+/** Hauteur d'un marqueur au-dessus de son point d'ancrage, en pixels : pastille et tige. */
+const PIN_PX = { desktop: 48, phone: 40 }
+/** Marges autour de la ville, en pixels. */
+const GAP = { top: 14, bottom: 14, side: { desktop: 48, phone: 14 } }
+
+const CORNERS = [PLINTH.xMin, PLINTH.xMax].flatMap((x) =>
+  [PLINTH.zMin, PLINTH.zMax].flatMap((z) => [new THREE.Vector3(x, 0, z), new THREE.Vector3(x, PLINTH.bottom, z)]),
+)
+const MARKERS = PLACE_LIST.map((p) => new THREE.Vector3(...p.marker))
+
+/**
+ * Bande verticale libre pour la ville : sous le titre, et sur téléphone au-dessus de la légende.
+ * Mesurée dans la page, car la taille du titre suit la largeur de l'écran.
+ * Rien n'est mesuré pendant que le titre bouge (ouverture ou fermeture d'un lieu) : la dernière mesure reste.
+ */
+function measureArrivalBand(height: number, isMobile: boolean): [number, number] | null {
+  const title = document.querySelector('.identity')
+  if (!title || document.querySelector('.hud.focused') || title.getAnimations().length) return null
+  const legend = document.querySelector('.legend')
+  const bottom = isMobile && legend ? legend.getBoundingClientRect().top : height
+  return [title.getBoundingClientRect().bottom, bottom]
 }
 
-function arrivalView(width: number, height: number) {
-  const d = fitDistance(width / height)
-  const cosE = Math.cos(REST_ELEVATION)
-  const position = new THREE.Vector3(
-    TARGET.x + Math.sin(REST_AZIMUTH) * cosE * d,
-    TARGET.y + Math.sin(REST_ELEVATION) * d,
-    TARGET.z + Math.cos(REST_AZIMUTH) * cosE * d,
-  )
-  return { position, target: TARGET, distance: d, elevation: REST_ELEVATION }
+/**
+ * Cadre la vue d'arrivée par le calcul : tout le socle tient en largeur, les marqueurs passent sous le titre,
+ * et la ville se centre dans la place restante. Quand la hauteur manque (fenêtre basse et large),
+ * la ville s'aligne sous le titre et seule la tranche du socle sort par le bas.
+ */
+function arrivalView(width: number, height: number, band: [number, number], isMobile: boolean) {
+  const elevation = restElevation(width / height)
+  const dir = new THREE.Vector3(Math.sin(REST_AZIMUTH) * Math.cos(elevation), Math.sin(elevation), Math.cos(REST_AZIMUTH) * Math.cos(elevation))
+  const forward = dir.clone().negate()
+  const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize()
+  const up = new THREE.Vector3().crossVectors(right, forward)
+  const tanV = Math.tan(THREE.MathUtils.degToRad(FOV_FAR / 2))
+  const tanH = tanV * (width / height)
+  const pin = isMobile ? PIN_PX.phone : PIN_PX.desktop
+  const side = isMobile ? GAP.side.phone : GAP.side.desktop
+  const top = band[0] + GAP.top
+  const room = band[1] - GAP.bottom - top
+
+  const target = new THREE.Vector3(CENTER[0], 2, CENTER[2])
+  let distance = 70
+  const eye = new THREE.Vector3()
+  const v = new THREE.Vector3()
+  const project = (p: THREE.Vector3): [number, number] => {
+    v.subVectors(p, eye)
+    const z = v.dot(forward)
+    return [((v.dot(right) / (z * tanH) + 1) / 2) * width, ((1 - v.dot(up) / (z * tanV)) / 2) * height]
+  }
+  // Quelques passes suffisent : chacune corrige la distance puis recentre
+  for (let i = 0; i < 8; i++) {
+    eye.copy(target).addScaledVector(dir, distance)
+    const corners = CORNERS.map(project)
+    const xs = corners.map((c) => c[0])
+    const pinTop = Math.min(...MARKERS.map((m) => project(m)[1] - pin), ...corners.map((c) => c[1]))
+    const surface = Math.max(...corners.filter((_, k) => k % 2 === 0).map((c) => c[1]))
+    const base = Math.max(...corners.map((c) => c[1]))
+    const left = Math.min(...xs)
+    const wide = Math.max(...xs) - left
+    distance *= Math.max(wide / (width - 2 * side), (surface - pinTop) / room)
+
+    const perPx = (2 * distance * tanV) / height
+    const wantedTop = base - pinTop <= room ? top + (room - (base - pinTop)) / 2 : top
+    target.addScaledVector(right, (left + wide / 2 - width / 2) * perPx)
+    target.addScaledVector(up, (wantedTop - pinTop) * perPx)
+  }
+  return { position: target.clone().addScaledVector(dir, distance), target, distance, elevation }
 }
 
 // ─── Décentrage de l'objectif ─────────────────────────────────────────────────
@@ -114,7 +165,18 @@ export function CameraRig({ isMobile }: { isMobile: boolean }) {
   const phase = useVille((s) => s.phase)
   const setPhase = useVille((s) => s.setPhase)
 
-  const rest = useMemo(() => arrivalView(size.width, size.height), [size.width, size.height])
+  // Le titre ne prend sa vraie taille qu'une fois sa police chargée
+  const [fontsReady, setFontsReady] = useState(false)
+  useEffect(() => {
+    document.fonts.ready.then(() => setFontsReady(true))
+  }, [])
+  const band = useRef<[number, number] | null>(null)
+  const rest = useMemo(() => {
+    band.current = measureArrivalBand(size.height, isMobile) ?? band.current
+    return arrivalView(size.width, size.height, band.current ?? [size.height * 0.14, size.height], isMobile)
+    // fontsReady ne sert qu'à relancer la mesure
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [size.width, size.height, isMobile, fontsReady])
 
   useEffect(() => {
     const c = ref.current
