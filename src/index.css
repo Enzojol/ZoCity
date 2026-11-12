@@ -73,7 +73,7 @@ a { color: inherit; text-decoration: none; }
 .panel h2 { margin: 3px 0 0; font: 700 25px/1.1 var(--display); letter-spacing: -0.015em; }
 .panel .close { margin-left: auto; width: 38px; height: 38px; border-radius: 50%; font-size: 24px; line-height: 1; background: rgba(255, 255, 255, 0.08); }
 .panel .close:hover { background: var(--neon); color: var(--night); }
-.panel-body { flex: 1; overflow-y: auto; padding: 20px 24px 28px; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.2) transparent; }
+.panel-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 20px 24px 28px; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.2) transparent; }
 .lead { margin: 0 0 16px; font-size: 16px; line-height: 1.5; }
 .cover { display: block; width: 100%; border-radius: 6px; margin-bottom: 16px; }
 .tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 20px; padding: 0; }
@@ -126,11 +126,16 @@ a { color: inherit; text-decoration: none; }
   .pin-head { width: 26px; height: 26px; font-size: 11px; box-shadow: 0 0 0 2px var(--night), 0 0 14px rgba(255, 225, 77, 0.7); }
   .pin-pulse { display: none; }
   .pin-stem { height: 10px; }
-  .panel { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 64vh; animation-name: rise; }
+  /* La feuille ne dépasse jamais la moitié basse de l'écran : le haut reste au bâtiment que la caméra vient cadrer */
+  .panel { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; max-height: calc(50vh - 8px); max-height: calc(50dvh - 8px); animation-name: rise; }
+  .hud.focused .legend { display: none; }
   @keyframes rise { from { transform: translateY(40px); opacity: 0; } }
-  .panel header { padding: 16px 16px 12px; }
+  .panel header { gap: 12px; padding: 12px 12px 10px 16px; }
+  .panel .num { width: 36px; height: 36px; font-size: 15px; }
+  .panel .kicker { font-size: 12.5px; }
+  .panel h2 { margin-top: 2px; font-size: 20px; }
+  .panel .close { width: 42px; height: 42px; }
   .panel-body { padding: 14px 16px 20px; }
-  .panel h2 { font-size: 21px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
