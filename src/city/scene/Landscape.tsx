@@ -1,9 +1,11 @@
 // Le paysage : socle et sa tranche, mer, ponton, voiliers, nuages.
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { makeGround, seaMaterial, waterWallMaterial } from '../shaders'
 import { skirtGeometry, terrainGeometry, WATER_LEVEL, waterWallGeometry } from '../layout'
 import { CENTER, PLINTH } from '../store'
+import { PIER } from './harbour'
 
 function Lettering({ text, at, rotationY }: { text: string; at: [number, number, number]; rotationY: number }) {
   const tex = useMemo(() => {
@@ -63,6 +65,38 @@ export function Plinth() {
   )
 }
 
+/** Deux voiliers qui tirent des bords dans la baie : un cercle lent chacun, loin du ponton et du bord du socle. */
+const BOATS = [
+  { x: -15.6, z: 7.4, size: 1.5, radius: 1, period: 120, phase: 0.6 },
+  { x: -12, z: 9.6, size: 1.2, radius: 0.8, period: -150, phase: 2.4 },
+]
+
+function Boat({ x, z, size, radius, period, phase, sail }: (typeof BOATS)[number] & { sail: THREE.BufferGeometry }) {
+  const ref = useRef<THREE.Group>(null)
+  useFrame((state) => {
+    const g = ref.current
+    if (!g) return
+    const t = state.clock.elapsedTime
+    const a = phase + (t / period) * Math.PI * 2
+    const turn = Math.sign(period)
+    g.position.set(x + Math.cos(a) * radius, WATER_LEVEL + 0.05 + Math.sin(t * 1.3 + phase) * 0.012, z + Math.sin(a) * radius)
+    // Cap sur la tangente, et la houle qui le fait rouler et tanguer
+    g.rotation.set(Math.sin(t * 1.1 + phase) * 0.05 - turn * 0.06, Math.atan2(-Math.cos(a) * turn, -Math.sin(a) * turn), Math.sin(t * 0.8 + phase * 2) * 0.03, 'YXZ')
+  })
+  // Le voilier bouge : il ne projette pas d'ombre, l'ombre étant figée après la préparation
+  return (
+    <group ref={ref} scale={size}>
+      <mesh userData={{ mobile: true }}>
+        <boxGeometry args={[0.9, 0.14, 0.28]} />
+        <meshStandardMaterial color="#fff4e8" roughness={0.5} />
+      </mesh>
+      <mesh geometry={sail} position={[-0.1, 0.08, 0]} userData={{ mobile: true }}>
+        <meshStandardMaterial color="#fff6ec" side={THREE.DoubleSide} roughness={0.6} />
+      </mesh>
+    </group>
+  )
+}
+
 /** Le ponton de pêche, et deux voiliers. */
 export function Waterfront() {
   const sail = useMemo(() => new THREE.ShapeGeometry(new THREE.Shape([new THREE.Vector2(0, 0), new THREE.Vector2(0.55, 0), new THREE.Vector2(0, 1.25)])), [])
@@ -70,9 +104,9 @@ export function Waterfront() {
   const piles = Array.from({ length: 6 }, (_, i) => i)
   return (
     <>
-      <group position={[-7.6, 0.02, 7.6]} rotation={[0, Math.PI / 4, 0]}>
+      <group position={[PIER.x, 0.02, PIER.z]} rotation={[0, PIER.angle, 0]}>
         <mesh position={[-2.6, -0.02, 0]} castShadow receiveShadow>
-          <boxGeometry args={[5.6, 0.05, 0.55]} />
+          <boxGeometry args={[PIER.length, 0.05, 0.55]} />
           <meshStandardMaterial color={deck} roughness={0.8} />
         </mesh>
         {piles.map((i) => (
@@ -88,16 +122,8 @@ export function Waterfront() {
           </group>
         ))}
       </group>
-      {([[-15.6, 7.4, 1.5], [-11.2, 10.6, 1.2]] as const).map(([x, z, s], i) => (
-        <group key={i} position={[x, WATER_LEVEL + 0.05, z]} rotation={[0, 0.7 + i, 0]} scale={s}>
-          <mesh castShadow>
-            <boxGeometry args={[0.9, 0.14, 0.28]} />
-            <meshStandardMaterial color="#fff4e8" roughness={0.5} />
-          </mesh>
-          <mesh geometry={sail} position={[-0.1, 0.08, 0]} castShadow>
-            <meshStandardMaterial color="#fff6ec" side={THREE.DoubleSide} roughness={0.6} />
-          </mesh>
-        </group>
+      {BOATS.map((boat, i) => (
+        <Boat key={i} {...boat} sail={sail} />
       ))}
     </>
   )
