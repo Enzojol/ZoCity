@@ -35,8 +35,12 @@ export function terrainHeight(x: number, z: number) {
 
 // Immeubles de fond : plus bas et moins saturés que les lieux de la ville, c'est voulu.
 const QUIET = ['#d9b9ad', '#cfa6ab', '#aab9c9', '#ddd2c2', '#a5b2c0', '#b9a7c6', '#9dbcb9', '#cf9c8c', '#c9c4d6']
-/** Étages de chaque modèle de filler.glb, dans l'ordre. */
-export const FILLER_FLOORS = [2, 3, 3, 4, 5, 6, 7, 9]
+/** Étages des modèles dessinés de filler.glb, dans l'ordre. */
+const DESIGN_FLOORS = [2, 2, 3, 3, 4, 4, 5, 6, 7, 9]
+/** Étages de chaque modèle de filler.glb : les dessinés, puis leurs copies symétriques dans le même ordre. */
+export const FILLER_FLOORS = [...DESIGN_FLOORS, ...DESIGN_FLOORS]
+/** Deux lots plus proches que ça se voient côte à côte, y compris de part et d'autre d'une rue. */
+const NEIGHBOUR = 5.2
 /** Hauteur permise par quartier, en étages. Un bloc absent d'ici ne reçoit aucun immeuble de fond. */
 const FILLER: Record<string, { min: number; max: number }> = {
   '-16,-8': { min: 2, max: 3 },
@@ -114,12 +118,23 @@ function randAt(x: number, z: number, salt = 0) {
   return mulberry(Math.round(x * 100) * 73856 + Math.round(z * 100) * 19349 + salt * 83492)
 }
 
+/** Parmi les choix, l'un de ceux que les voisins utilisent le moins, au hasard entre ex aequo. */
+function leastUsed(choices: number[], used: number[], rand: () => number) {
+  const count = (c: number) => used.filter((u) => u === c).length
+  const fewest = Math.min(...choices.map(count))
+  const best = choices.filter((c) => count(c) === fewest)
+  return best[Math.floor(rand() * best.length)]
+}
+
 /** Les lieux réservent leurs lots d'abord, chaque lot resté libre reçoit un immeuble de fond. */
 export function buildLayout(plots: Plot[], sightlines: Sightline[]): Layout {
   const L: Layout = { filler: [], lamps: [], palms: [], trees: [], parasols: [] }
   const taken = new Set(plots.flatMap(({ block, lots }) => lots.map((l) => `${block[0]},${block[1]},${l}`)))
   const clear = (x: number, z: number) => !blocksView(x, z, sightlines)
 
+  // Chaque lot des quartiers de fond reçoit un modèle et une teinte, même s'il est pris par un lieu ou laissé en square :
+  // le tirage d'un lot ne dépend ainsi que des lots tirés avant lui, jamais de ce qui est construit
+  const drawn: { x: number; z: number; design: number; tint: number }[] = []
   for (const [cx, cz] of BLOCKS) {
     for (const [lx, lz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
       const x = cx + lx * (BLOCK / 2 - 0.1)
@@ -128,22 +143,31 @@ export function buildLayout(plots: Plot[], sightlines: Sightline[]): Layout {
     }
     const range = FILLER[`${cx},${cz}`]
     if (!range) continue
-    const fits = FILLER_FLOORS.flatMap((f, i) => (f >= range.min && f <= range.max ? [i] : []))
+    const fits = DESIGN_FLOORS.flatMap((f, i) => (f >= range.min && f <= range.max ? [i] : []))
     for (const name of Object.keys(LOTS) as LotName[]) {
-      if (taken.has(`${cx},${cz},${name}`)) continue
       const x = cx + LOTS[name][0]
       const z = cz + LOTS[name][1]
       const rand = randAt(x, z)
       // Un lot sur huit reste un petit square : la ville respire
-      if (rand() < 0.12) {
+      const park = rand() < 0.12
+      const near = drawn.filter((d) => Math.hypot(d.x - x, d.z - z) < NEIGHBOUR)
+      // Jamais le même dessin ni la même teinte qu'un voisin, quand le quartier en offre assez
+      const design = leastUsed(fits, near.map((d) => d.design), rand)
+      const tint = leastUsed(QUIET.map((_, i) => i), near.map((d) => d.tint), rand)
+      drawn.push({ x, z, design, tint })
+      if (taken.has(`${cx},${cz},${name}`)) continue
+      if (park) {
         for (let t = 0; t < 3; t++) L.trees.push({ x: x + (rand() - 0.5) * 1.8, z: z + (rand() - 0.5) * 1.8, s: 1 + rand() * 0.4, r: rand() * 6.28 })
         continue
       }
+      // Une fois sur deux la copie symétrique : rue et côté gauche échangés, le toit retourné
+      const mirrored = rand() < 0.5
       L.filler.push({
-        variant: fits[Math.floor(rand() * fits.length)],
+        variant: design + (mirrored ? DESIGN_FLOORS.length : 0),
         x,
         z,
-        color: new THREE.Color(QUIET[Math.floor(rand() * QUIET.length)]).lerp(new THREE.Color('#ffffff'), 0.25),
+        // Un peu plus ou moins pâle d'un lot à l'autre : deux teintes voisines ne font jamais un aplat
+        color: new THREE.Color(QUIET[tint]).lerp(new THREE.Color('#ffffff'), 0.18 + rand() * 0.14),
       })
     }
   }
