@@ -6,7 +6,7 @@
 import type { ComponentType } from 'react'
 import { plotCenter, plotHalfSize, type Plot, type Sightline } from './layout'
 import { Gym, Interests, Post, School, Square, Tower, Workshop } from './buildings'
-import type { PlaceId, V3 } from './store'
+import { FOV_CLOSE, PLINTH, type PlaceId, type V3 } from './store'
 import { ContactPanel, ExperiencePanel, GymPanel, InterestsPanel, SchoolPanel, SkillsPanel, ZoCityPanel } from '@/ui/panels'
 
 interface PlaceEntry {
@@ -33,11 +33,35 @@ interface StreetView {
 
 /**
  * Vue de rue par défaut : depuis le côté de la vue d'arrivée, à hauteur de passant, assez loin pour que le bâtiment
- * tienne dans le cadre en largeur comme en hauteur.
+ * tienne dans le cadre en largeur comme en hauteur. Le cadre est la zone que le panneau laisse libre :
+ * à peu près carré sur ordinateur, plus large que haut sur téléphone, avec l'objectif de rue en hauteur.
  */
 function defaultView(plot: Plot, height: number): StreetView {
   const [hx, hz] = plotHalfSize(plot)
-  return { azimuth: -0.55, distance: Math.max(Math.max(hx, hz) * 2.5, height * 1.1), eye: 0.42, look: 0.25 + height * 0.3 }
+  const azimuth = -0.55
+  // Demi-largeur du terrain vu de biais : deux façades à la fois
+  const half = hx * Math.abs(Math.cos(azimuth)) + hz * Math.abs(Math.sin(azimuth))
+  return { azimuth, distance: Math.max(half * 3.1, height * 2.1), eye: 0.5, look: height * 0.45 }
+}
+
+/**
+ * Un lieu proche du bord peut mettre sa caméra au-dessus du vide, devant le socle.
+ * L'œil monte alors juste assez pour que le bas de l'image retombe sur la ville et jamais sous le bord.
+ */
+function eyeAboveEdge(from: [number, number], to: [number, number], eye: number, look: number) {
+  const dx = to[0] - from[0]
+  const dz = to[1] - from[1]
+  const length = Math.hypot(dx, dz)
+  // Entrée du rayon dans le rectangle du socle, en distance au sol depuis la caméra
+  const enter = (p: number, d: number, min: number, max: number) => (p < min ? (min - p) / d : p > max ? (max - p) / d : 0)
+  const outside = Math.max(enter(from[0], dx, PLINTH.xMin, PLINTH.xMax), enter(from[1], dz, PLINTH.zMin, PLINTH.zMax)) * length
+  if (outside <= 0) return eye
+  const half = (FOV_CLOSE / 2) * (Math.PI / 180)
+  for (let i = 0; i < 3; i++) {
+    const below = half - Math.atan2(look - eye, length)
+    eye = Math.max(eye, (outside + 0.4) * Math.tan(below))
+  }
+  return eye
 }
 
 const ENTRIES: PlaceEntry[] = [
@@ -47,7 +71,7 @@ const ENTRIES: PlaceEntry[] = [
     building: 'Immeuble d’affaires',
     plot: { block: [8, -8], lots: ['sw'] },
     height: 7.25,
-    view: { azimuth: -1.05, distance: 8, eye: 0.6, look: 3.3 },
+    view: { azimuth: -1.1, distance: 12, eye: 1.1, look: 3.6 },
     Model: Tower,
     Panel: ExperiencePanel,
   },
@@ -66,7 +90,7 @@ const ENTRIES: PlaceEntry[] = [
     building: 'Projet · maquette sur la place',
     plot: { block: [0, 0], lots: ['nw', 'ne', 'sw', 'se'] },
     height: 1.05,
-    view: { azimuth: -0.6, distance: 2.2, eye: 1.35, look: 0.72 },
+    view: { azimuth: -0.85, distance: 4.4, eye: 1.8, look: 0.6 },
     Model: Square,
     Panel: ZoCityPanel,
   },
@@ -76,7 +100,7 @@ const ENTRIES: PlaceEntry[] = [
     building: 'École',
     plot: { block: [-16, -8], lots: ['sw', 'se'] },
     height: 3.5,
-    view: { azimuth: -0.25, distance: 6.8, eye: 0.7, look: 1.3 },
+    view: { azimuth: -0.25, distance: 11, eye: 0.8, look: 1.6 },
     Model: School,
     Panel: SchoolPanel,
   },
@@ -86,7 +110,7 @@ const ENTRIES: PlaceEntry[] = [
     building: 'Atelier',
     plot: { block: [-8, -8], lots: ['sw'] },
     height: 2.2,
-    view: { azimuth: -0.62, distance: 4.6, eye: 0.42, look: 0.8 },
+    view: { azimuth: -0.62 },
     Model: Workshop,
     Panel: SkillsPanel,
   },
@@ -96,7 +120,7 @@ const ENTRIES: PlaceEntry[] = [
     building: 'Librairie et garage, face au ponton',
     plot: { block: [-8, 0], lots: ['sw', 'se'] },
     height: 1.9,
-    view: { azimuth: -0.31, distance: 6.6, eye: 0.5, look: 0.72 },
+    view: { azimuth: -0.31, distance: 8.5 },
     Model: Interests,
     Panel: InterestsPanel,
   },
@@ -121,7 +145,9 @@ export interface Place extends PlaceEntry {
 
 export const PLACE_LIST: Place[] = ENTRIES.map((e, i) => {
   const [x, z] = plotCenter(e.plot)
-  const { azimuth, distance, eye, look } = { ...defaultView(e.plot, e.height), ...e.view }
+  const { azimuth, distance, eye: wanted, look } = { ...defaultView(e.plot, e.height), ...e.view }
+  const from: [number, number] = [x + Math.sin(azimuth) * distance, z + Math.cos(azimuth) * distance]
+  const eye = eyeAboveEdge(from, [x, z], wanted, look)
   return {
     ...e,
     number: i + 1,
@@ -129,7 +155,7 @@ export const PLACE_LIST: Place[] = ENTRIES.map((e, i) => {
     marker: [x, e.height + 0.35, z],
     halfSize: plotHalfSize(e.plot),
     camera: {
-      position: [x + Math.sin(azimuth) * distance, eye, z + Math.cos(azimuth) * distance],
+      position: [from[0], eye, from[1]],
       target: [x, look, z],
     },
   }
