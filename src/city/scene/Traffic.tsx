@@ -31,6 +31,9 @@ const laneEndX = (l: Lane) => l.x0 + l.dx * l.length
 const laneEndZ = (l: Lane) => l.z0 + l.dz * l.length
 
 function createTraffic(isMobile: boolean) {
+  // Les carrefours repartent libres : aucun véhicule ne les tient encore
+  junctionQuarters.fill(0)
+  legCars.fill(0)
   const kinds = vehicleKinds()
   const roster: VehicleKind[] = [
     ...Array<VehicleKind>(isMobile ? 7 : 11).fill(kinds.car),

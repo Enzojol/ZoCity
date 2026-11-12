@@ -108,6 +108,10 @@ function createCrowd(isMobile: boolean) {
 
   function setup(w: Walkways) {
     ways = w
+    // Repart d'une rue vide : personne n'est encore engagé sur un passage
+    legWalkers.fill(0)
+    crossing.fill(-1)
+    pending.fill(-1)
     const color = new THREE.Color()
     const sides = w.edges.flatMap((e, i) => (e.junction < 0 ? [i] : []))
     const sideLength = sides.reduce((sum, i) => sum + w.edges[i].length, 0)
