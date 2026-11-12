@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import { U } from '../shaders'
 import { PLACE_LIST, PLACES } from '../places'
 import { CENTER, FOV_CLOSE, FOV_FAR, PLINTH, REST_AZIMUTH, restElevation, useVille } from '../store'
+import { Flight, IdleDrift, LookAround } from './cameraMoves'
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
@@ -184,11 +185,59 @@ export function CameraRig({ isMobile }: { isMobile: boolean }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [size.width, size.height, isMobile, fontsReady])
 
+  const drift = useRef(new IdleDrift())
+  const look = useRef(new LookAround())
+  const flight = useRef(new Flight())
+  const touching = useRef(false)
+  const previous = useRef<string | null>(null)
+  const gl = useThree((s) => s.gl)
+  const surface = useThree((s) => s.events.connected) as HTMLElement | undefined
+
+  // Le moindre geste sur la ville suspend la dérive ; la molette n'émet pas de début ni de fin de geste
+  useEffect(() => {
+    const c = ref.current
+    const el = surface ?? gl.domElement
+    if (!c) return
+    const start = () => {
+      touching.current = true
+      drift.current.hold()
+    }
+    const end = () => {
+      touching.current = false
+      drift.current.hold()
+    }
+    const wheel = () => drift.current.hold()
+    c.addEventListener('controlstart', start)
+    c.addEventListener('controlend', end)
+    el.addEventListener('wheel', wheel, { passive: true })
+    const detach = look.current.attach(el)
+    return () => {
+      c.removeEventListener('controlstart', start)
+      c.removeEventListener('controlend', end)
+      el.removeEventListener('wheel', wheel)
+      detach()
+    }
+  }, [gl, surface])
+
+  // La ville bouge dès qu'elle apparaît
+  useEffect(() => {
+    if (phase === 'city') drift.current.startNow()
+  }, [phase])
+
   useEffect(() => {
     const c = ref.current
     if (!c || phase !== 'city') return
     const { position: p, target: q } = rest
-    if (focus) {
+    const from = previous.current
+    previous.current = focus
+    drift.current.hold()
+    look.current.release()
+    flight.current.active = false
+    if (focus && from && from !== focus && !REDUCED_MOTION) {
+      // D'un lieu à l'autre, par-dessus les toits
+      const { position: a, target: b } = PLACES[focus].camera
+      flight.current.start(c, a, b)
+    } else if (focus) {
       c.minPolarAngle = 0
       c.maxPolarAngle = Math.PI
       c.minAzimuthAngle = -Infinity
@@ -247,6 +296,17 @@ export function CameraRig({ isMobile }: { isMobile: boolean }) {
     r.h += (goal.h - r.h) * k
     applyLens(persp, lens.current, r, size.width, size.height)
 
+    const c = ref.current
+    if (c && phase === 'city') {
+      flight.current.step(c, dt)
+      if (!focus && !REDUCED_MOTION) drift.current.step(c, dt, touching.current)
+    }
+    // Le regard se pose par-dessus l'orientation que les contrôles viennent d'écrire
+    const l = look.current
+    l.enabled = !!focus && !flight.current.active && !REDUCED_MOTION
+    l.frame = { x: (r.x + r.w / 2) * size.width, y: (r.y + r.h / 2) * size.height, w: (r.w * size.width) / 2, h: (r.h * size.height) / 2 }
+    l.step(camera, dt, REDUCED_MOTION)
+
     // Mode affiche : le ciel suit l'objectif, puis redevient le vrai ciel au niveau de la rue
     const poster = THREE.MathUtils.clamp((FOV_CLOSE - lens.current) / (FOV_CLOSE - FOV_FAR), 0, 1)
     camera.getWorldDirection(skyForward)
@@ -260,7 +320,6 @@ export function CameraRig({ isMobile }: { isMobile: boolean }) {
     q2.setFromAxisAngle(worldUp, (turn - 0.12 * Math.sin(turn)) * poster)
     U.skyRot.value.setFromMatrix4(m4.makeRotationFromQuaternion(q2.multiply(q1)))
 
-    const c = ref.current
     if (!c || phase === 'city') return
     const { position: p, target: q } = rest
     // Reste sur la vue d'arrivée pendant le chargement : la préparation dessine ainsi toute la ville
