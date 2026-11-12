@@ -53,6 +53,11 @@ a { color: inherit; text-decoration: none; }
 .legend .txt { display: flex; flex-direction: column; gap: 1px; }
 .legend b { font-size: 14px; font-weight: 600; }
 .legend i { display: none; }
+/* Lieu ouvert : la légende se replie en colonne de numéros pour laisser voir la rue, et se déplie au survol ou au clavier */
+@media (min-width: 768px) {
+  .hud.focused .legend:not(:hover):not(:focus-within) { width: auto; padding-top: 8px; }
+  .hud.focused .legend:not(:hover):not(:focus-within) h2, .hud.focused .legend:not(:hover):not(:focus-within) .txt { display: none; }
+}
 
 .pin { display: flex; flex-direction: column; align-items: center; transform: translateY(-50%); transition: opacity 0.3s, transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.3); position: relative; }
 .pin-hidden { opacity: 0; transform: translateY(-40%) scale(0.8); }

@@ -94,6 +94,7 @@ function Legend() {
           <li key={p.id}>
             <button
               className={focus === p.id || hovered === p.id ? 'on' : ''}
+              aria-label={`${p.number}. ${p.section}`}
               onClick={() => setFocus(focus === p.id ? null : p.id)}
               onPointerEnter={() => setHovered(p.id)}
               onPointerLeave={() => setHovered(null)}
