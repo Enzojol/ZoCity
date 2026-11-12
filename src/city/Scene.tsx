@@ -12,6 +12,7 @@ import { PLACE_LIST, RESERVED } from './places'
 import { CENTER, FOV_FAR, useVille } from './store'
 import { CameraRig } from './scene/CameraRig'
 import { CloudLayer, Plinth, Waterfront } from './scene/Landscape'
+import { People } from './scene/People'
 import { Marker, PlaceSlot } from './scene/PlaceSlot'
 import { Streets } from './scene/Streets'
 import { Traffic } from './scene/Traffic'
@@ -85,6 +86,7 @@ export function Scene({ isMobile, skip }: { isMobile: boolean; skip: boolean }) 
         <Streets />
         <Traffic isMobile={isMobile} />
         <Waterfront />
+        <People isMobile={isMobile} />
         {PLACE_LIST.map((p) => (
           <PlaceSlot key={p.id} place={p}>
             <p.Model />
