@@ -13,6 +13,12 @@ const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').mat
 const DESCENT_SECONDS = 4.5
 /** Vitesse commune de l'objectif et du décentrage : ils suivent le vol de la caméra. */
 const LENS_RATE = 2.1
+/**
+ * Orbite de la vue d'arrivée. Vue de derrière, la ville montre le dos de ses façades et perd ses enseignes :
+ * on s'arrête un peu après le quart de tour de chaque côté. Plus haut, la ville passe sous le titre ;
+ * plus bas que quelques degrés, elle devient une tranche.
+ */
+const ORBIT = { azimuth: 1.6, higher: 0.3, lower: 0.3, minElevation: 0.14, closer: 0.35, farther: 1.3 }
 
 /** Rectangle de l'écran, en fractions de la largeur et de la hauteur : un redimensionnement ne le fait pas bouger. */
 interface Rect {
@@ -197,22 +203,23 @@ export function CameraRig({ isMobile }: { isMobile: boolean }) {
       c.setLookAt(p.x, p.y, p.z, q.x, q.y, q.z, !REDUCED_MOTION)
       // Les limites ne reviennent qu'une fois la caméra rentrée, sinon elles contrarient le retour
       const id = window.setTimeout(() => {
-        c.minPolarAngle = Math.PI / 2 - rest.elevation - 0.3
-        c.maxPolarAngle = Math.PI / 2 - rest.elevation + 0.26
-        c.minAzimuthAngle = REST_AZIMUTH - Math.PI / 4
-        c.maxAzimuthAngle = REST_AZIMUTH + Math.PI / 4
-        c.minDistance = rest.distance * 0.55
-        c.maxDistance = rest.distance * 1.15
+        c.minPolarAngle = Math.PI / 2 - rest.elevation - ORBIT.higher
+        c.maxPolarAngle = Math.min(Math.PI / 2 - rest.elevation + ORBIT.lower, Math.PI / 2 - ORBIT.minElevation)
+        c.minAzimuthAngle = REST_AZIMUTH - ORBIT.azimuth
+        c.maxAzimuthAngle = REST_AZIMUTH + ORBIT.azimuth
+        c.minDistance = rest.distance * ORBIT.closer
+        c.maxDistance = rest.distance * ORBIT.farther
         c.smoothTime = 0.6
         c.mouseButtons.right = 0
         c.mouseButtons.middle = 0
-        c.touches.one = isMobile ? 0 : CameraControlsImpl.ACTION.TOUCH_ROTATE
+        // Un doigt fait tourner la ville, deux la rapprochent : la page ne défile pas, rien ne se dispute le geste
+        c.touches.one = CameraControlsImpl.ACTION.TOUCH_ROTATE
         c.touches.two = CameraControlsImpl.ACTION.TOUCH_DOLLY
         c.touches.three = 0
       }, 1500)
       return () => window.clearTimeout(id)
     }
-  }, [focus, phase, isMobile, rest])
+  }, [focus, phase, rest])
 
   // L'objectif d'arrivée et le cadre visé, amortis ensemble pendant le vol
   const lens = useRef(FOV_FAR)
@@ -246,9 +253,11 @@ export function CameraRig({ isMobile }: { isMobile: boolean }) {
     const elevation = Math.asin(skyForward.y)
     const azimuth = Math.atan2(skyForward.x, -skyForward.z)
     const restYaw = Math.atan2(-Math.sin(REST_AZIMUTH), Math.cos(REST_AZIMUTH))
+    // Le ciel suit l'orbite un peu moins vite qu'elle (parallaxe), sans saut quand on passe derrière la ville
+    const turn = Math.atan2(Math.sin(azimuth - restYaw), Math.cos(azimuth - restYaw))
     skyAxis.crossVectors(skyForward, worldUp).normalize()
     q1.setFromAxisAngle(skyAxis, -elevation * poster)
-    q2.setFromAxisAngle(worldUp, (azimuth - restYaw) * poster * 0.88)
+    q2.setFromAxisAngle(worldUp, (turn - 0.12 * Math.sin(turn)) * poster)
     U.skyRot.value.setFromMatrix4(m4.makeRotationFromQuaternion(q2.multiply(q1)))
 
     const c = ref.current
