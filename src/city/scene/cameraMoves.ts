@@ -36,13 +36,14 @@ export class IdleDrift {
     this.quietFor = IDLE_SECONDS
   }
 
-  step(controls: CameraControls, dt: number, touching: boolean) {
+  /** amount réduit l'amplitude là où la ville touche presque les bords de l'écran. */
+  step(controls: CameraControls, dt: number, touching: boolean, amount = 1) {
     if (touching) return this.hold()
     this.quietFor += dt
     if (this.quietFor < IDLE_SECONDS) return
     this.t += Math.min(dt, 1 / 30)
     const ramp = smooth(Math.min(1, this.t / RAMP_SECONDS))
-    const azimuth = SWAY.azimuth * ramp * Math.sin((this.t * 2 * Math.PI) / SWAY.period)
+    const azimuth = SWAY.azimuth * amount * ramp * Math.sin((this.t * 2 * Math.PI) / SWAY.period)
     const polar = SWAY.polar * ramp * Math.sin((this.t * 2 * Math.PI) / SWAY.polarPeriod)
     // Par petits pas amortis : les limites de l'orbite et un geste en cours gardent la main
     controls.rotate(azimuth - this.last.azimuth, polar - this.last.polar, true)

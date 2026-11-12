@@ -120,7 +120,7 @@ const ENTRIES: PlaceEntry[] = [
     building: 'Librairie et garage, face au ponton',
     plot: { block: [-8, 0], lots: ['sw', 'se'] },
     height: 1.9,
-    view: { azimuth: -0.31, distance: 8.5 },
+    view: { azimuth: -0.31, distance: 10.4 },
     Model: Interests,
     Panel: InterestsPanel,
   },

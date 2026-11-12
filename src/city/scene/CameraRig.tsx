@@ -299,7 +299,7 @@ export function CameraRig({ isMobile }: { isMobile: boolean }) {
     const c = ref.current
     if (c && phase === 'city') {
       flight.current.step(c, dt)
-      if (!focus && !REDUCED_MOTION) drift.current.step(c, dt, touching.current)
+      if (!focus && !REDUCED_MOTION) drift.current.step(c, dt, touching.current, size.width < size.height ? 0.5 : 1)
     }
     // Le regard se pose par-dessus l'orientation que les contrôles viennent d'écrire
     const l = look.current
