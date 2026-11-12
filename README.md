@@ -55,7 +55,8 @@ src/
     buildings.tsx   # éléments vivants des bâtiments : enseignes, néons, animations
     models.ts       # chargement des modèles cuits
     Scene.tsx       # toile 3D, lumière, effets d'écran
-    scene/          # socle et paysage, rues et circulation, lieux et marqueurs, caméra, préparation
+    scene/          # socle et paysage, rues, lieux et marqueurs, caméra, préparation, et la vie de la ville :
+                    # circulation, passants, mouettes, dirigeable
     shaders.ts      # ciel, mer, sol, matériau des modèles cuits
   ui/               # titre, légende, panneaux, écran de chargement
   static/page.ts    # version texte, écrite dans le HTML au build
@@ -77,6 +78,10 @@ son style et son marqueur qui le distinguent, pas sa taille. Tous les modèles p
 - **Préparation derrière l'écran de chargement.** Modèles, polices, shaders, textures et premières images sont traités
   avant la descente, qui ne démarre qu'une fois les images fluides. Une machine lente passe en résolution inférieure à
   ce moment-là, là où le changement ne se voit pas.
+- **Une ville qui vit, sans simulateur.** Les véhicules suivent le réseau des rues déduit de la grille et du rivage,
+  s'attendent aux carrefours et laissent passer les piétons. Les passants ne marchent que là où l'emprise réelle des
+  bâtiments, lue dans la scène au chargement, laisse la place : un bâtiment qui change ne se fait jamais traverser.
+  Tout ce qui bouge s'écarte de la caméra de rue et ne projette pas d'ombre, puisque l'ombre est figée.
 - **Version texte pour tous les autres.** Moteurs de recherche, lecteurs d'écran, navigateurs sans WebGL ou sans
   JavaScript lisent une page écrite dans le HTML à partir des mêmes données. Elle prend aussi le relais si la ville
   échoue à se charger.
