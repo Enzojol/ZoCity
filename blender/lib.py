@@ -237,6 +237,14 @@ def area_light(at, size, size_y, energy, color="#ffc9a0"):
     a.data.energy = energy
 
 
+def point_light(at, energy, color="#ffb070", radius=0.05):
+    bpy.ops.object.light_add(type="POINT", location=at)
+    p = bpy.context.active_object
+    p.data.color = srgb(color)[:3]
+    p.data.energy = energy
+    p.data.shadow_soft_size = radius
+
+
 def _join_and_unwrap(margin):
     _flush_panes()
     bpy.ops.object.select_all(action="DESELECT")

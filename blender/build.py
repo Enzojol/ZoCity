@@ -7,6 +7,8 @@ import importlib
 import os
 import sys
 
+# Pas de __pycache__ à côté des scripts : la cuisson ne doit rien laisser dans le dépôt
+sys.dont_write_bytecode = True
 sys.path[:0] = [os.path.dirname(__file__), os.path.join(os.path.dirname(__file__), "models")]
 
 argv = sys.argv[sys.argv.index("--") + 1 :]
