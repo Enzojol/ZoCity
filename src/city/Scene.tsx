@@ -13,7 +13,8 @@ import { CENTER, FOV_FAR, useVille } from './store'
 import { CameraRig } from './scene/CameraRig'
 import { CloudLayer, Plinth, Waterfront } from './scene/Landscape'
 import { Marker, PlaceSlot } from './scene/PlaceSlot'
-import { Streets, Traffic } from './scene/Streets'
+import { Streets } from './scene/Streets'
+import { Traffic } from './scene/Traffic'
 import { Warmup } from './scene/Warmup'
 
 function Sky() {
@@ -82,7 +83,7 @@ export function Scene({ isMobile, skip }: { isMobile: boolean; skip: boolean }) 
       <Suspense fallback={null}>
         <Plinth />
         <Streets />
-        <Traffic />
+        <Traffic isMobile={isMobile} />
         <Waterfront />
         {PLACE_LIST.map((p) => (
           <PlaceSlot key={p.id} place={p}>
